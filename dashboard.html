@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Workshop 3 — Streaming ETL Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #222635;
+    --border: #2e3248;
+    --accent: #6c63ff;
+    --accent2: #00c9a7;
+    --accent3: #f7b731;
+    --accent4: #fc5c65;
+    --text: #e8eaf0;
+    --text-muted: #7c82a0;
+    --green: #26de81;
+    --red: #fc5c65;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #1a1d27 0%, #12111e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .header-left h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.3px; }
+  .header-left h1 span { color: var(--accent); }
+  .header-left p { color: var(--text-muted); font-size: 0.82rem; margin-top: 2px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(108,99,255,0.15); border: 1px solid rgba(108,99,255,0.3);
+    color: var(--accent); padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 600;
+  }
+  .badge::before { content: ''; width: 7px; height: 7px; background: var(--accent2); border-radius: 50%; animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* ── PIPELINE BANNER ── */
+  .pipeline {
+    margin: 24px 32px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 28px;
+  }
+  .pipeline h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 16px; }
+  .pipeline-flow {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 0;
+    justify-content: center;
+  }
+  .pipe-step {
+    display: flex; flex-direction: column; align-items: center;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 16px; min-width: 110px; text-align: center;
+    position: relative;
+  }
+  .pipe-step .icon { font-size: 1.4rem; margin-bottom: 4px; }
+  .pipe-step .label { font-size: 0.72rem; font-weight: 600; color: var(--text); }
+  .pipe-step .sublabel { font-size: 0.65rem; color: var(--text-muted); margin-top: 1px; }
+  .pipe-step.done { border-color: var(--accent2); }
+  .pipe-step.done .label { color: var(--accent2); }
+  .pipe-arrow { color: var(--text-muted); font-size: 1.1rem; padding: 0 8px; }
+
+  /* ── GRID ── */
+  .main { padding: 24px 32px 48px; }
+  .section-title {
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--text-muted); margin-bottom: 14px; margin-top: 32px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+  .kpi-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .kpi-card .kpi-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+  .kpi-card .kpi-value { font-size: 2rem; font-weight: 700; line-height: 1; }
+  .kpi-card .kpi-sub { font-size: 0.72rem; color: var(--text-muted); }
+  .kpi-card.accent1 .kpi-value { color: var(--accent); }
+  .kpi-card.accent2 .kpi-value { color: var(--accent2); }
+  .kpi-card.accent3 .kpi-value { color: var(--accent3); }
+  .kpi-card.accent4 .kpi-value { color: var(--accent4); }
+
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .chart-grid.wide { grid-template-columns: 2fr 1fr; }
+  .chart-grid.full { grid-template-columns: 1fr; }
+
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px;
+  }
+  .chart-card h3 {
+    font-size: 0.9rem; font-weight: 600; margin-bottom: 4px;
+  }
+  .chart-card .chart-desc { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 18px; }
+  .chart-wrap { position: relative; }
+  .chart-wrap.h300 { height: 300px; }
+  .chart-wrap.h340 { height: 340px; }
+  .chart-wrap.h380 { height: 380px; }
+  .chart-wrap.h420 { height: 420px; }
+
+  /* ── STATUS TABLE ── */
+  .status-pills { display: flex; flex-direction: column; gap: 10px; }
+  .status-pill {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface2); border-radius: 8px; padding: 10px 14px;
+  }
+  .status-pill .sp-label { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; }
+  .status-pill .sp-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .status-pill .sp-count { font-size: 0.85rem; font-weight: 700; }
+  .status-pill .sp-bar-wrap { flex: 1; margin: 0 14px; height: 5px; background: var(--border); border-radius: 3px; }
+  .status-pill .sp-bar { height: 100%; border-radius: 3px; }
+
+  /* ── COUNTRY TABLE ── */
+  .country-search {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
+    color: var(--text); padding: 8px 12px; font-size: 0.82rem; width: 100%; margin-bottom: 14px;
+    outline: none;
+  }
+  .country-search::placeholder { color: var(--text-muted); }
+  .country-search:focus { border-color: var(--accent); }
+  .country-table-wrap { max-height: 320px; overflow-y: auto; border-radius: 8px; }
+  .country-table-wrap::-webkit-scrollbar { width: 5px; }
+  .country-table-wrap::-webkit-scrollbar-track { background: var(--surface2); }
+  .country-table-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  thead th {
+    background: var(--surface2); color: var(--text-muted); text-align: left;
+    padding: 8px 10px; font-weight: 600; font-size: 0.7rem; text-transform: uppercase;
+    letter-spacing: 0.5px; position: sticky; top: 0; z-index: 1;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding: 8px 10px; }
+  .err-low { color: var(--green); } .err-mid { color: var(--accent3); } .err-high { color: var(--red); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.72rem;
+    border-top: 1px solid var(--border); margin-top: 8px;
+  }
+
+  @media(max-width: 900px) {
+    .chart-grid, .chart-grid.wide { grid-template-columns: 1fr; }
+    header, .pipeline, .main { padding-left: 16px; padding-right: 16px; }
+    .pipeline { margin-left: 16px; margin-right: 16px; }
+  }
+
+  /* ── EDA SECTION ── */
+  .eda-main { padding: 24px 32px 0; display: flex; flex-direction: column; gap: 20px; }
+  .year-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .year-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; text-align: center;
+  }
+  .year-card .yc-year { font-size: 1.4rem; font-weight: 700; color: var(--accent); }
+  .year-card .yc-stat { font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; }
+  .yc-badge {
+    display: inline-block; margin-top: 10px; padding: 3px 9px;
+    border-radius: 999px; font-size: 0.65rem; font-weight: 600;
+  }
+  .badge-ok  { background: rgba(38,222,129,0.12); color: var(--green);   border: 1px solid rgba(38,222,129,0.3); }
+  .badge-warn{ background: rgba(247,183,49,0.12); color: var(--accent3); border: 1px solid rgba(247,183,49,0.3); }
+
+  .dq-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .dq-table th {
+    background: var(--surface2); color: var(--text-muted); padding: 8px 12px;
+    text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .dq-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .dq-table tr:last-child td { border-bottom: none; }
+  .val-ok   { color: var(--green);   font-weight: 700; }
+  .val-warn { color: var(--accent3); font-weight: 700; }
+  .val-err  { color: var(--red);     font-weight: 700; }
+
+  .obs-list { list-style: none; padding: 0; margin: 0; }
+  .obs-list li {
+    padding: 9px 0; border-bottom: 1px solid var(--border);
+    font-size: 0.8rem; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .obs-list li:last-child { border-bottom: none; }
+  .obs-icon { flex-shrink: 0; margin-top: 1px; }
+
+  .sdiff-wrap { overflow-x: auto; }
+  .schema-diff-table { width: 100%; border-collapse: collapse; font-size: 0.74rem; }
+  .schema-diff-table th {
+    background: var(--surface2); color: var(--text-muted); padding: 9px 10px;
+    text-align: left; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.5px;
+    position: sticky; top: 0; z-index: 1;
+  }
+  .schema-diff-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .schema-diff-table tr:hover { background: var(--surface2); }
+  .tag {
+    display: inline-block; padding: 2px 7px; border-radius: 4px;
+    font-size: 0.67rem; font-weight: 600; white-space: nowrap;
+  }
+  .tag-same   { background: rgba(38,222,129,0.12);  color: var(--green);        border: 1px solid rgba(38,222,129,0.25); }
+  .tag-diff   { background: rgba(247,183,49,0.12);  color: var(--accent3);      border: 1px solid rgba(247,183,49,0.25); }
+  .tag-absent { background: rgba(100,110,130,0.1);  color: var(--text-muted);   border: 1px solid rgba(100,110,130,0.2); }
+  .tag-dropped{ background: rgba(252,92,101,0.1);   color: var(--red);          border: 1px solid rgba(252,92,101,0.2); }
+  .legend-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; font-size: 0.72rem; color: var(--text-muted); align-items: center; }
+
+  .schema-proposal { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .schema-proposal th {
+    background: var(--surface2); color: var(--text-muted); padding: 9px 14px;
+    text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .schema-proposal td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+  .schema-proposal tr:last-child td { border-bottom: none; }
+  .schema-proposal tr:hover { background: var(--surface2); }
+  .col-name { color: var(--accent2); font-weight: 700; font-family: monospace; font-size: 0.85rem; }
+  .col-type { color: var(--accent3); font-size: 0.72rem; font-family: monospace; }
+  .role-target  { background: rgba(252,92,101,0.12); color: var(--red);     padding: 2px 8px; border-radius: 4px; font-size: 0.67rem; font-weight: 600; }
+  .role-feature { background: rgba(108,99,255,0.12); color: var(--accent);  padding: 2px 8px; border-radius: 4px; font-size: 0.67rem; font-weight: 600; }
+  .role-id      { background: rgba(0,201,167,0.12);  color: var(--accent2); padding: 2px 8px; border-radius: 4px; font-size: 0.67rem; font-weight: 600; }
+  .role-meta    { background: rgba(100,110,130,0.12);color: var(--text-muted);padding:2px 8px;border-radius:4px;font-size:0.67rem;font-weight:600; }
+
+  .eda-img { width: 100%; border-radius: 8px; margin-top: 10px; display: block; }
+
+  @media(max-width: 900px) {
+    .year-grid { grid-template-columns: repeat(3, 1fr); }
+    .eda-main  { padding-left: 16px; padding-right: 16px; }
+  }
+
+  /* ── SCHEMA VISUAL ── */
+  .sv-wrap { margin-top: 10px; }
+  .sv-canvas {
+    display: grid;
+    grid-template-columns: 1fr 30px 292px 30px 1fr;
+    gap: 0;
+    align-items: center;
+  }
+  .sv-col-sources { display: flex; flex-direction: column; gap: 12px; }
+  .sv-arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent2); font-size: 1.15rem; opacity: 0.65; height: 100%;
+    letter-spacing: -2px;
+  }
+  .sv-source {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(108,99,255,0.3);
+    background: rgba(108,99,255,0.06);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    transition: transform 0.18s, box-shadow 0.18s;
+  }
+  .sv-source:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.45); }
+  .sv-src-title { font-weight: 700; font-size: 0.78rem; color: var(--accent); margin-bottom: 2px; }
+  .sv-src-meta  { font-size: 0.62rem; color: var(--text-muted); margin-bottom: 8px; }
+  .sv-src-pills { display: flex; flex-wrap: wrap; gap: 3px; }
+  .sv-pill {
+    padding: 2px 6px; border-radius: 999px; font-size: 0.6rem; white-space: nowrap;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  }
+  .sv-p-same { background: rgba(38,222,129,0.1);  border: 1px solid rgba(38,222,129,0.28);  color: var(--green); }
+  .sv-p-diff { background: rgba(247,183,49,0.1);  border: 1px solid rgba(247,183,49,0.28);  color: var(--accent3); }
+  .sv-p-drop { background: rgba(100,110,130,0.08); border: 1px solid rgba(100,110,130,0.18); color: var(--text-muted); text-decoration: line-through; opacity: 0.6; }
+
+  .sv-unified {
+    padding: 18px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(0,201,167,0.48);
+    background: linear-gradient(155deg, rgba(0,28,38,0.92), rgba(8,16,32,0.94));
+    box-shadow: 0 0 36px rgba(0,201,167,0.1), 0 0 72px rgba(0,201,167,0.04);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    transition: box-shadow 0.3s;
+  }
+  .sv-unified:hover { box-shadow: 0 0 52px rgba(0,201,167,0.2), 0 0 96px rgba(0,201,167,0.07); }
+  .sv-u-title { font-weight: 700; font-size: 0.92rem; color: var(--accent2); letter-spacing: 0.03em; margin-bottom: 1px; }
+  .sv-u-meta  { font-size: 0.62rem; color: var(--text-muted); margin-bottom: 12px; }
+  .sv-col-row {
+    display: grid; grid-template-columns: 1fr 56px 46px; align-items: center; gap: 4px;
+    padding: 5px 8px; border-radius: 6px; margin-bottom: 3px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.025);
+    transition: background 0.15s;
+  }
+  .sv-col-row:hover { background: rgba(255,255,255,0.06); }
+  .sv-cn { color: var(--accent2); font-weight: 600; font-size: 0.73rem; }
+  .sv-ct { color: var(--accent3); font-size: 0.59rem; text-align: right; }
+  .sv-cr { font-size: 0.56rem; font-weight: 700; padding: 2px 5px; border-radius: 3px; text-align: center; }
+  .sv-r-target  { background: rgba(252,92,101,0.22);  color: var(--red); }
+  .sv-r-feature { background: rgba(108,99,255,0.22);  color: var(--accent); }
+  .sv-r-id      { background: rgba(0,201,167,0.18);   color: var(--accent2); }
+  .sv-r-meta    { background: rgba(100,110,130,0.18); color: var(--text-muted); }
+  .sv-divider   { height: 1px; background: rgba(255,255,255,0.07); margin: 8px 0; }
+  .sv-legend {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-top: 14px;
+    font-size: 0.71rem; color: var(--text-muted); align-items: center;
+  }
+  .sv-legend-roles { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+  @media(max-width: 900px) {
+    .sv-canvas { grid-template-columns: 1fr; }
+    .sv-arrow  { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>Workshop 3 — <span>Streaming ETL</span> Dashboard</h1>
+    <p>World Happiness Report 2015–2019 · Apache Kafka + ML Inference · Universidad Autónoma de Occidente</p>
+  </div>
+  <div class="badge">Live Pipeline · ETL G01</div>
+</header>
+
+<!-- PIPELINE FLOW -->
+<div class="pipeline">
+  <h2>Pipeline Architecture</h2>
+  <div class="pipeline-flow">
+    <div class="pipe-step done"><div class="icon">📂</div><div class="label">CSV Files</div><div class="sublabel">2015–2019</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step done"><div class="icon">🔍</div><div class="label">EDA</div><div class="sublabel">Profiling</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step done"><div class="icon">🧹</div><div class="label">Cleaning</div><div class="sublabel">Harmonize</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step done"><div class="icon">⚙️</div><div class="label">Features</div><div class="sublabel">Engineering</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step done"><div class="icon">🤖</div><div class="label">Model</div><div class="sublabel">LinearReg</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step done"><div class="icon">📡</div><div class="label">Producer</div><div class="sublabel">Kafka</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step done"><div class="icon">📨</div><div class="label">Consumer</div><div class="sublabel">Inference</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step done"><div class="icon">🗄️</div><div class="label">PostgreSQL</div><div class="sublabel">Predictions</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step done" style="border-color:var(--accent3);"><div class="icon">📊</div><div class="label">Dashboard</div><div class="sublabel">KPIs</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ EDA REPORT ═══════════════════ -->
+<div class="eda-main">
+
+  <div class="section-title" style="margin-top:8px">Step 1 — Exploratory Data Analysis (EDA) · Part A</div>
+
+  <!-- YEAR OVERVIEW CARDS -->
+  <div class="year-grid">
+    <div class="year-card">
+      <div class="yc-year">2015</div>
+      <div class="yc-stat">158 rows · 12 cols</div>
+      <div class="yc-stat">Region ✓ · Std Error col</div>
+      <span class="yc-badge badge-ok">0 missing · 0 dupes</span>
+    </div>
+    <div class="year-card">
+      <div class="yc-year">2016</div>
+      <div class="yc-stat">157 rows · 13 cols</div>
+      <div class="yc-stat">Region ✓ · CI cols added</div>
+      <span class="yc-badge badge-ok">0 missing · 0 dupes</span>
+    </div>
+    <div class="year-card">
+      <div class="yc-year">2017</div>
+      <div class="yc-stat">155 rows · 12 cols</div>
+      <div class="yc-stat">No Region · dot notation</div>
+      <span class="yc-badge badge-ok">0 missing · 0 dupes</span>
+    </div>
+    <div class="year-card">
+      <div class="yc-year">2018</div>
+      <div class="yc-stat">156 rows · 9 cols</div>
+      <div class="yc-stat">Renamed schema · minimal</div>
+      <span class="yc-badge badge-warn">1 missing · 0 dupes</span>
+    </div>
+    <div class="year-card">
+      <div class="yc-year">2019</div>
+      <div class="yc-stat">156 rows · 9 cols</div>
+      <div class="yc-stat">Same schema as 2018</div>
+      <span class="yc-badge badge-ok">0 missing · 0 dupes</span>
+    </div>
+  </div>
+
+  <!-- MISSING VALUES + OBSERVATIONS -->
+  <div class="chart-grid">
+
+    <div class="chart-card">
+      <h3>Missing Values &amp; Duplicate Records</h3>
+      <p class="chart-desc">Row-level data quality check across all 5 source CSV files</p>
+      <table class="dq-table">
+        <thead>
+          <tr><th>Year</th><th>Rows</th><th>Missing Values</th><th>Affected Column</th><th>Duplicates</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2015</td><td>158</td><td class="val-ok">0</td><td style="color:var(--text-muted)">—</td><td class="val-ok">0</td></tr>
+          <tr><td>2016</td><td>157</td><td class="val-ok">0</td><td style="color:var(--text-muted)">—</td><td class="val-ok">0</td></tr>
+          <tr><td>2017</td><td>155</td><td class="val-ok">0</td><td style="color:var(--text-muted)">—</td><td class="val-ok">0</td></tr>
+          <tr><td>2018</td><td>156</td><td class="val-warn">1</td><td style="color:var(--accent3);font-size:0.72rem">Perceptions of corruption</td><td class="val-ok">0</td></tr>
+          <tr><td>2019</td><td>156</td><td class="val-ok">0</td><td style="color:var(--text-muted)">—</td><td class="val-ok">0</td></tr>
+          <tr style="background:var(--surface2);font-weight:600">
+            <td>Total</td><td>782</td><td class="val-warn">1</td><td style="font-size:0.72rem;color:var(--text-muted)">→ filled with year median</td><td class="val-ok">0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="chart-card">
+      <h3>Data Quality Observations</h3>
+      <p class="chart-desc">All issues identified during EDA that drove the cleaning and harmonization decisions</p>
+      <ul class="obs-list">
+        <li><span class="obs-icon">⚠️</span><span><strong>Inconsistent column names:</strong> 2017 uses dot-notation (<code>Happiness.Score</code>, <code>Economy..GDP.per.Capita.</code>); 2018–2019 use plain text (<code>Score</code>, <code>GDP per capita</code>)</span></li>
+        <li><span class="obs-icon">⚠️</span><span><strong>Inconsistent data types:</strong> Rank column is <code>int64</code> named differently across years (<code>Happiness Rank</code> vs <code>Overall rank</code>). All numeric features are float64 — consistent internally but mapped to different concepts.</span></li>
+        <li><span class="obs-icon">⚠️</span><span><strong>Schema differences between years:</strong> Column count varies from 9 (2018–2019) to 13 (2016). Region only present in 2015–2016. Confidence intervals only in 2016, whisker values only in 2017.</span></li>
+        <li><span class="obs-icon">⚠️</span><span><strong>Family vs Social support:</strong> Same concept, renamed — harmonized to <code>family</code></span></li>
+        <li><span class="obs-icon">✅</span><span><strong>1 missing value</strong> in 2018 <code>Perceptions of corruption</code> — filled with year-level median</span></li>
+        <li><span class="obs-icon">✅</span><span><strong>No duplicate records</strong> across any of the 5 source files</span></li>
+        <li><span class="obs-icon">🗑️</span><span><strong>Columns dropped:</strong> Dystopia Residual, Standard Error, Confidence Intervals (Lower/Upper), Whisker High/Low — year-specific or non-predictive</span></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- SCHEMA DIFFERENCES TABLE -->
+  <div class="chart-card">
+    <h3>Schema Differences Between Years</h3>
+    <p class="chart-desc">Per-year column names for each canonical field — the core harmonization challenge of this workshop</p>
+    <div class="sdiff-wrap">
+      <table class="schema-diff-table">
+        <thead>
+          <tr><th>Canonical Field</th><th>2015</th><th>2016</th><th>2017</th><th>2018</th><th>2019</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>country</strong></td>
+            <td><span class="tag tag-same">Country</span></td>
+            <td><span class="tag tag-same">Country</span></td>
+            <td><span class="tag tag-same">Country</span></td>
+            <td><span class="tag tag-diff">Country or region</span></td>
+            <td><span class="tag tag-diff">Country or region</span></td>
+          </tr>
+          <tr>
+            <td><strong>happiness_score</strong></td>
+            <td><span class="tag tag-same">Happiness Score</span></td>
+            <td><span class="tag tag-same">Happiness Score</span></td>
+            <td><span class="tag tag-diff">Happiness.Score</span></td>
+            <td><span class="tag tag-diff">Score</span></td>
+            <td><span class="tag tag-diff">Score</span></td>
+          </tr>
+          <tr>
+            <td><strong>gdp</strong></td>
+            <td><span class="tag tag-same">Economy (GDP per Capita)</span></td>
+            <td><span class="tag tag-same">Economy (GDP per Capita)</span></td>
+            <td><span class="tag tag-diff">Economy..GDP.per.Capita.</span></td>
+            <td><span class="tag tag-diff">GDP per capita</span></td>
+            <td><span class="tag tag-diff">GDP per capita</span></td>
+          </tr>
+          <tr>
+            <td><strong>family</strong></td>
+            <td><span class="tag tag-same">Family</span></td>
+            <td><span class="tag tag-same">Family</span></td>
+            <td><span class="tag tag-same">Family</span></td>
+            <td><span class="tag tag-diff">Social support</span></td>
+            <td><span class="tag tag-diff">Social support</span></td>
+          </tr>
+          <tr>
+            <td><strong>health</strong></td>
+            <td><span class="tag tag-same">Health (Life Expectancy)</span></td>
+            <td><span class="tag tag-same">Health (Life Expectancy)</span></td>
+            <td><span class="tag tag-diff">Health..Life.Expectancy.</span></td>
+            <td><span class="tag tag-diff">Healthy life expectancy</span></td>
+            <td><span class="tag tag-diff">Healthy life expectancy</span></td>
+          </tr>
+          <tr>
+            <td><strong>freedom</strong></td>
+            <td><span class="tag tag-same">Freedom</span></td>
+            <td><span class="tag tag-same">Freedom</span></td>
+            <td><span class="tag tag-same">Freedom</span></td>
+            <td><span class="tag tag-diff">Freedom to make life choices</span></td>
+            <td><span class="tag tag-diff">Freedom to make life choices</span></td>
+          </tr>
+          <tr>
+            <td><strong>generosity</strong></td>
+            <td><span class="tag tag-same">Generosity</span></td>
+            <td><span class="tag tag-same">Generosity</span></td>
+            <td><span class="tag tag-same">Generosity</span></td>
+            <td><span class="tag tag-same">Generosity</span></td>
+            <td><span class="tag tag-same">Generosity</span></td>
+          </tr>
+          <tr>
+            <td><strong>corruption</strong></td>
+            <td><span class="tag tag-same">Trust (Government Corruption)</span></td>
+            <td><span class="tag tag-same">Trust (Government Corruption)</span></td>
+            <td><span class="tag tag-diff">Trust..Government.Corruption.</span></td>
+            <td><span class="tag tag-diff">Perceptions of corruption</span></td>
+            <td><span class="tag tag-diff">Perceptions of corruption</span></td>
+          </tr>
+          <tr>
+            <td><strong>region</strong></td>
+            <td><span class="tag tag-same">Region</span></td>
+            <td><span class="tag tag-same">Region</span></td>
+            <td><span class="tag tag-absent">ABSENT → 'Unknown'</span></td>
+            <td><span class="tag tag-absent">ABSENT → 'Unknown'</span></td>
+            <td><span class="tag tag-absent">ABSENT → 'Unknown'</span></td>
+          </tr>
+          <tr style="background:rgba(252,92,101,0.04)">
+            <td><strong style="color:var(--red)">DROPPED cols</strong></td>
+            <td><span class="tag tag-dropped">Standard Error</span></td>
+            <td><span class="tag tag-dropped">CI Lower / Upper</span></td>
+            <td><span class="tag tag-dropped">Whisker high/low</span></td>
+            <td><span class="tag tag-absent">—</span></td>
+            <td><span class="tag tag-absent">—</span></td>
+          </tr>
+          <tr style="background:rgba(252,92,101,0.04)">
+            <td><strong style="color:var(--red)">DROPPED (all years)</strong></td>
+            <td colspan="5"><span class="tag tag-dropped">Dystopia Residual</span> — present in 2015–2017, non-predictive residual term</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend-row">
+      <span><span class="tag tag-same">green</span> consistent name</span>
+      <span><span class="tag tag-diff">amber</span> different name, same concept</span>
+      <span><span class="tag tag-absent">grey</span> absent / filled</span>
+      <span><span class="tag tag-dropped">red</span> dropped column</span>
+    </div>
+  </div>
+
+  <!-- OUTLIERS + CORRELATION -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Potential Outliers — Box Plots</h3>
+      <p class="chart-desc">Box plots for all 7 features across the unified dataset (n=782). Outliers are most visible in <strong>generosity</strong> and <strong>corruption</strong>; GDP and health show mild high-end outliers.</p>
+      <img src="data/processed/outliers_boxplot.png" class="eda-img" alt="Outlier box plots" />
+    </div>
+    <div class="chart-card">
+      <h3>Feature Correlation Heatmap</h3>
+      <p class="chart-desc">Pearson correlation across all numeric features. <strong>GDP</strong> (r≈0.78) and <strong>health</strong> (r≈0.75) are the strongest predictors of happiness score. Generosity and corruption are weakly correlated.</p>
+      <img src="data/processed/correlation_heatmap.png" class="eda-img" alt="Feature correlation heatmap" />
+    </div>
+  </div>
+
+  <!-- UNIFIED SCHEMA PROPOSAL — visual -->
+  <div class="chart-card">
+    <h3>Unified Schema Proposal — Step 2 Output (Data Cleaning &amp; Harmonization)</h3>
+    <p class="chart-desc">All 5 source files harmonized into one canonical schema. <span style="color:var(--accent3)">Amber</span> = renamed, <span style="color:var(--green)">green</span> = consistent across all years, <span style="color:var(--text-muted);text-decoration:line-through">strikethrough</span> = dropped.</p>
+
+    <div class="sv-wrap">
+      <div class="sv-canvas">
+
+        <!-- ── LEFT: 2015 + 2016 ── -->
+        <div class="sv-col-sources">
+
+          <div class="sv-source">
+            <div class="sv-src-title">2015.csv</div>
+            <div class="sv-src-meta">158 rows · 12 cols · has Region</div>
+            <div class="sv-src-pills">
+              <span class="sv-pill sv-p-diff">Country</span>
+              <span class="sv-pill sv-p-diff">Happiness Score</span>
+              <span class="sv-pill sv-p-diff">Economy (GDP per Capita)</span>
+              <span class="sv-pill sv-p-diff">Family</span>
+              <span class="sv-pill sv-p-diff">Health (Life Expectancy)</span>
+              <span class="sv-pill sv-p-same">Freedom</span>
+              <span class="sv-pill sv-p-same">Generosity</span>
+              <span class="sv-pill sv-p-diff">Trust (Gov. Corruption)</span>
+              <span class="sv-pill sv-p-diff">Region</span>
+              <span class="sv-pill sv-p-drop">Happiness Rank</span>
+              <span class="sv-pill sv-p-drop">Standard Error</span>
+              <span class="sv-pill sv-p-drop">Dystopia Residual</span>
+            </div>
+          </div>
+
+          <div class="sv-source">
+            <div class="sv-src-title">2016.csv</div>
+            <div class="sv-src-meta">157 rows · 13 cols · CI columns added</div>
+            <div class="sv-src-pills">
+              <span class="sv-pill sv-p-diff">Country</span>
+              <span class="sv-pill sv-p-diff">Happiness Score</span>
+              <span class="sv-pill sv-p-diff">Economy (GDP per Capita)</span>
+              <span class="sv-pill sv-p-diff">Family</span>
+              <span class="sv-pill sv-p-diff">Health (Life Expectancy)</span>
+              <span class="sv-pill sv-p-same">Freedom</span>
+              <span class="sv-pill sv-p-same">Generosity</span>
+              <span class="sv-pill sv-p-diff">Trust (Gov. Corruption)</span>
+              <span class="sv-pill sv-p-diff">Region</span>
+              <span class="sv-pill sv-p-drop">Happiness Rank</span>
+              <span class="sv-pill sv-p-drop">Lower CI</span>
+              <span class="sv-pill sv-p-drop">Upper CI</span>
+              <span class="sv-pill sv-p-drop">Dystopia Residual</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── ARROW LEFT → CENTER ── -->
+        <div class="sv-arrow">→</div>
+
+        <!-- ── CENTER: Unified Schema ── -->
+        <div class="sv-unified">
+          <div class="sv-u-title">happiness_unified</div>
+          <div class="sv-u-meta">782 rows · 10 canonical columns</div>
+
+          <div class="sv-col-row">
+            <span class="sv-cn">country</span>
+            <span class="sv-ct">string</span>
+            <span class="sv-cr sv-r-id">id</span>
+          </div>
+          <div class="sv-col-row">
+            <span class="sv-cn">year</span>
+            <span class="sv-ct">int</span>
+            <span class="sv-cr sv-r-id">id</span>
+          </div>
+          <div class="sv-divider"></div>
+          <div class="sv-col-row">
+            <span class="sv-cn">happiness_score</span>
+            <span class="sv-ct">float64</span>
+            <span class="sv-cr sv-r-target">target</span>
+          </div>
+          <div class="sv-divider"></div>
+          <div class="sv-col-row">
+            <span class="sv-cn">gdp</span>
+            <span class="sv-ct">float64</span>
+            <span class="sv-cr sv-r-feature">feature</span>
+          </div>
+          <div class="sv-col-row">
+            <span class="sv-cn">family</span>
+            <span class="sv-ct">float64</span>
+            <span class="sv-cr sv-r-feature">feature</span>
+          </div>
+          <div class="sv-col-row">
+            <span class="sv-cn">health</span>
+            <span class="sv-ct">float64</span>
+            <span class="sv-cr sv-r-feature">feature</span>
+          </div>
+          <div class="sv-col-row">
+            <span class="sv-cn">freedom</span>
+            <span class="sv-ct">float64</span>
+            <span class="sv-cr sv-r-feature">feature</span>
+          </div>
+          <div class="sv-col-row">
+            <span class="sv-cn">generosity</span>
+            <span class="sv-ct">float64</span>
+            <span class="sv-cr sv-r-feature">feature</span>
+          </div>
+          <div class="sv-col-row">
+            <span class="sv-cn">corruption</span>
+            <span class="sv-ct">float64</span>
+            <span class="sv-cr sv-r-feature">feature</span>
+          </div>
+          <div class="sv-divider"></div>
+          <div class="sv-col-row">
+            <span class="sv-cn">region</span>
+            <span class="sv-ct">string</span>
+            <span class="sv-cr sv-r-meta">meta</span>
+          </div>
+        </div>
+
+        <!-- ── ARROW CENTER ← RIGHT ── -->
+        <div class="sv-arrow">←</div>
+
+        <!-- ── RIGHT: 2017 + 2018 + 2019 ── -->
+        <div class="sv-col-sources">
+
+          <div class="sv-source">
+            <div class="sv-src-title">2017.csv</div>
+            <div class="sv-src-meta">155 rows · 12 cols · dot notation · no Region</div>
+            <div class="sv-src-pills">
+              <span class="sv-pill sv-p-diff">Country</span>
+              <span class="sv-pill sv-p-diff">Happiness.Score</span>
+              <span class="sv-pill sv-p-diff">Economy..GDP.per.Capita.</span>
+              <span class="sv-pill sv-p-same">Family</span>
+              <span class="sv-pill sv-p-diff">Health..Life.Expectancy.</span>
+              <span class="sv-pill sv-p-same">Freedom</span>
+              <span class="sv-pill sv-p-same">Generosity</span>
+              <span class="sv-pill sv-p-diff">Trust..Government.Corruption.</span>
+              <span class="sv-pill sv-p-drop">Happiness.Rank</span>
+              <span class="sv-pill sv-p-drop">Whisker.high</span>
+              <span class="sv-pill sv-p-drop">Whisker.low</span>
+              <span class="sv-pill sv-p-drop">Dystopia.Residual</span>
+            </div>
+          </div>
+
+          <div class="sv-source">
+            <div class="sv-src-title">2018.csv</div>
+            <div class="sv-src-meta">156 rows · 9 cols · 1 missing value</div>
+            <div class="sv-src-pills">
+              <span class="sv-pill sv-p-diff">Country or region</span>
+              <span class="sv-pill sv-p-diff">Score</span>
+              <span class="sv-pill sv-p-diff">GDP per capita</span>
+              <span class="sv-pill sv-p-diff">Social support</span>
+              <span class="sv-pill sv-p-diff">Healthy life expectancy</span>
+              <span class="sv-pill sv-p-diff">Freedom to make life choices</span>
+              <span class="sv-pill sv-p-same">Generosity</span>
+              <span class="sv-pill sv-p-diff">Perceptions of corruption</span>
+              <span class="sv-pill sv-p-drop">Overall rank</span>
+            </div>
+          </div>
+
+          <div class="sv-source">
+            <div class="sv-src-title">2019.csv</div>
+            <div class="sv-src-meta">156 rows · 9 cols · identical schema to 2018</div>
+            <div class="sv-src-pills">
+              <span class="sv-pill sv-p-diff">Country or region</span>
+              <span class="sv-pill sv-p-diff">Score</span>
+              <span class="sv-pill sv-p-diff">GDP per capita</span>
+              <span class="sv-pill sv-p-diff">Social support</span>
+              <span class="sv-pill sv-p-diff">Healthy life expectancy</span>
+              <span class="sv-pill sv-p-diff">Freedom to make life choices</span>
+              <span class="sv-pill sv-p-same">Generosity</span>
+              <span class="sv-pill sv-p-diff">Perceptions of corruption</span>
+              <span class="sv-pill sv-p-drop">Overall rank</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div><!-- /sv-canvas -->
+
+      <div class="sv-legend">
+        <span><span class="sv-pill sv-p-same">col</span>&nbsp; consistent name across all years</span>
+        <span><span class="sv-pill sv-p-diff">col</span>&nbsp; renamed during harmonization</span>
+        <span><span class="sv-pill sv-p-drop">col</span>&nbsp; column dropped</span>
+        <div class="sv-legend-roles">
+          <span class="sv-cr sv-r-target"  style="padding:2px 8px;border-radius:4px;font-size:0.68rem">target</span>
+          <span class="sv-cr sv-r-feature" style="padding:2px 8px;border-radius:4px;font-size:0.68rem">feature</span>
+          <span class="sv-cr sv-r-id"      style="padding:2px 8px;border-radius:4px;font-size:0.68rem">identifier</span>
+          <span class="sv-cr sv-r-meta"    style="padding:2px 8px;border-radius:4px;font-size:0.68rem">metadata</span>
+        </div>
+      </div>
+    </div><!-- /sv-wrap -->
+  </div>
+
+</div>
+<!-- ═══════════════════ END EDA ═══════════════════ -->
+
+<div class="main">
+
+  <div class="section-title" style="margin-top:8px">Part B — Streaming ETL Dashboard · KPIs &amp; Predictions</div>
+
+  <!-- KPI CARDS -->
+  <div class="section-title">KPI 1 — Model Performance Overview</div>
+  <div class="kpi-grid">
+    <div class="kpi-card accent1">
+      <div class="kpi-label">Avg Absolute Error</div>
+      <div class="kpi-value">0.426</div>
+      <div class="kpi-sub">Mean |actual − predicted|</div>
+    </div>
+    <div class="kpi-card accent2">
+      <div class="kpi-label">R² Score</div>
+      <div class="kpi-value">0.764</div>
+      <div class="kpi-sub">76.4% variance explained</div>
+    </div>
+    <div class="kpi-card accent3">
+      <div class="kpi-label">RMSE</div>
+      <div class="kpi-value">0.547</div>
+      <div class="kpi-sub">Root mean squared error</div>
+    </div>
+    <div class="kpi-card accent4">
+      <div class="kpi-label">Total Predictions</div>
+      <div class="kpi-value">782</div>
+      <div class="kpi-sub">Records streamed via Kafka</div>
+    </div>
+    <div class="kpi-card" style="border-color:var(--accent2)">
+      <div class="kpi-label">Avg Signed Error</div>
+      <div class="kpi-value" style="color:var(--accent2)">≈ 0.00</div>
+      <div class="kpi-sub">No systematic bias</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Countries</div>
+      <div class="kpi-value" style="color:var(--text)">170</div>
+      <div class="kpi-sub">Unique countries covered</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Years Covered</div>
+      <div class="kpi-value" style="color:var(--text)">2015–19</div>
+      <div class="kpi-sub">5 years of happiness data</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Kafka Topic</div>
+      <div class="kpi-value" style="font-size:0.85rem; color:var(--accent); padding-top:8px">happiness-predictions</div>
+      <div class="kpi-sub">Event-driven inference</div>
+    </div>
+  </div>
+
+  <!-- KPI 2 & STATUS -->
+  <div class="section-title">KPI 2 — Predictions by Country</div>
+  <div class="chart-grid wide">
+    <div class="chart-card">
+      <h3>Top 20 Countries — Actual vs Predicted Happiness</h3>
+      <p class="chart-desc">Average happiness score across 2015–2019 for the 20 happiest countries</p>
+      <div class="chart-wrap h380"><canvas id="chartCountry"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Event Processing Status</h3>
+      <p class="chart-desc">Processing outcome for all Kafka events received by the consumer</p>
+      <div class="chart-wrap h200"><canvas id="chartStatus"></canvas></div>
+      <div style="margin-top:18px;" class="status-pills" id="statusPills"></div>
+    </div>
+  </div>
+
+  <!-- KPI 3 — SCATTER -->
+  <div class="section-title">KPI 3 — Predicted vs Actual Score</div>
+  <div class="chart-grid wide">
+    <div class="chart-card">
+      <h3>Actual vs Predicted Happiness Score</h3>
+      <p class="chart-desc">Each point is one country-year event. Points on the diagonal = perfect prediction.</p>
+      <div class="chart-wrap h420"><canvas id="chartScatter"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Country Lookup Table</h3>
+      <p class="chart-desc">All 170 countries — actual, predicted and error</p>
+      <input class="country-search" id="countrySearch" type="text" placeholder="🔍  Search country…" />
+      <div class="country-table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Country</th><th>Actual</th><th>Predicted</th><th>Abs Error</th></tr></thead>
+          <tbody id="countryTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI 4 — TRENDS -->
+  <div class="section-title">KPI 4 — Prediction Trends Over Time</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Avg Actual vs Predicted Score by Year</h3>
+      <p class="chart-desc">How the model tracks real-world happiness trends across years</p>
+      <div class="chart-wrap h300"><canvas id="chartYearLine"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Avg Absolute Error by Year</h3>
+      <p class="chart-desc">Prediction error trend — lower is better</p>
+      <div class="chart-wrap h300"><canvas id="chartYearError"></canvas></div>
+    </div>
+  </div>
+
+  <!-- REGION -->
+  <div class="section-title">Bonus — Average Happiness by Region</div>
+  <div class="chart-grid full">
+    <div class="chart-card">
+      <h3>Regional Happiness Overview</h3>
+      <p class="chart-desc">Average happiness score aggregated by world region (2015–2019)</p>
+      <div class="chart-wrap h300"><canvas id="chartRegion"></canvas></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Workshop 3 · ETL G01 · Universidad Autónoma de Occidente · Data: World Happiness Report 2015–2019 (Kaggle) · Model: Linear Regression · Pipeline: Apache Kafka + PostgreSQL
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+const KPI1 = {"avg_abs_error":0.4262,"avg_signed_error":0.0,"total_predictions":782,"r2":0.764,"rmse":0.5474};
+
+const YEAR_DATA = [
+  {year:2015,total:158,avg_actual:5.3757,avg_predicted:5.3131,avg_abs_error:0.4431},
+  {year:2016,total:157,avg_actual:5.3822,avg_predicted:5.1505,avg_abs_error:0.4621},
+  {year:2017,total:155,avg_actual:5.354,avg_predicted:5.4788,avg_abs_error:0.3966},
+  {year:2018,total:156,avg_actual:5.3759,avg_predicted:5.4524,avg_abs_error:0.4088},
+  {year:2019,total:156,avg_actual:5.4071,avg_predicted:5.5032,avg_abs_error:0.4196},
+];
+
+const TOP20 = [
+  {country:"Denmark",actual:7.546,predicted:7.057,error:0.489},
+  {country:"Norway",actual:7.541,predicted:7.1465,error:0.3945},
+  {country:"Finland",actual:7.5378,predicted:6.9186,error:0.6192},
+  {country:"Switzerland",actual:7.5114,predicted:7.1127,error:0.3987},
+  {country:"Iceland",actual:7.511,predicted:6.9288,error:0.5822},
+  {country:"Netherlands",actual:7.4046,predicted:6.9163,error:0.4883},
+  {country:"Canada",actual:7.3506,predicted:6.9587,error:0.3919},
+  {country:"Sweden",actual:7.3192,predicted:7.0195,error:0.2997},
+  {country:"New Zealand",actual:7.313,predicted:7.018,error:0.295},
+  {country:"Australia",actual:7.2762,predicted:7.0087,error:0.2675},
+  {country:"Israel",actual:7.1422,predicted:6.3371,error:0.8051},
+  {country:"Austria",actual:7.142,predicted:6.7525,error:0.3895},
+  {country:"Costa Rica",actual:7.1262,predicted:6.1212,error:1.005},
+  {country:"Puerto Rico",actual:7.039,predicted:6.1398,error:0.8992},
+  {country:"United States",actual:6.9988,predicted:6.6049,error:0.3939},
+  {country:"Ireland",actual:6.9644,predicted:6.9936,error:0.0967},
+  {country:"Luxembourg",actual:6.936,predicted:7.1211,error:0.1851},
+  {country:"Germany",actual:6.929,predicted:6.7488,error:0.1802},
+  {country:"Belgium",actual:6.9214,predicted:6.6352,error:0.2862},
+  {country:"United Kingdom",actual:6.91,predicted:6.679,error:0.2932},
+];
+
+const ALL_COUNTRIES = [{"country":"Denmark","actual":7.546,"predicted":7.057,"error":0.489},{"country":"Norway","actual":7.541,"predicted":7.1465,"error":0.3945},{"country":"Finland","actual":7.5378,"predicted":6.9186,"error":0.6192},{"country":"Switzerland","actual":7.5114,"predicted":7.1127,"error":0.3987},{"country":"Iceland","actual":7.511,"predicted":6.9288,"error":0.5822},{"country":"Netherlands","actual":7.4046,"predicted":6.9163,"error":0.4883},{"country":"Canada","actual":7.3506,"predicted":6.9587,"error":0.3919},{"country":"Sweden","actual":7.3192,"predicted":7.0195,"error":0.2997},{"country":"New Zealand","actual":7.313,"predicted":7.018,"error":0.295},{"country":"Australia","actual":7.2762,"predicted":7.0087,"error":0.2675},{"country":"Israel","actual":7.1422,"predicted":6.3371,"error":0.8051},{"country":"Austria","actual":7.142,"predicted":6.7525,"error":0.3895},{"country":"Costa Rica","actual":7.1262,"predicted":6.1212,"error":1.005},{"country":"Puerto Rico","actual":7.039,"predicted":6.1398,"error":0.8992},{"country":"United States","actual":6.9988,"predicted":6.6049,"error":0.3939},{"country":"Ireland","actual":6.9644,"predicted":6.9936,"error":0.0967},{"country":"Luxembourg","actual":6.936,"predicted":7.1211,"error":0.1851},{"country":"Germany","actual":6.929,"predicted":6.7488,"error":0.1802},{"country":"Belgium","actual":6.9214,"predicted":6.6352,"error":0.2862},{"country":"United Kingdom","actual":6.91,"predicted":6.679,"error":0.2932},{"country":"Mexico","actual":6.8844,"predicted":5.9845,"error":0.8999},{"country":"Chile","actual":6.7148,"predicted":6.1756,"error":0.5392},{"country":"United Arab Emirates","actual":6.6906,"predicted":6.5044,"error":0.1862},{"country":"Brazil","actual":6.6786,"predicted":6.0476,"error":0.631},{"country":"Czech Republic","actual":6.6464,"predicted":6.3816,"error":0.2648},{"country":"Argentina","actual":6.5954,"predicted":5.9702,"error":0.6252},{"country":"Uruguay","actual":6.5898,"predicted":6.2178,"error":0.372},{"country":"Colombia","actual":6.5486,"predicted":5.9048,"error":0.6438},{"country":"Thailand","actual":6.5252,"predicted":5.9099,"error":0.6153},{"country":"Saudi Arabia","actual":6.4942,"predicted":5.9516,"error":0.5426},{"country":"Spain","actual":6.4858,"predicted":6.3424,"error":0.1434},{"country":"Malta","actual":6.4762,"predicted":6.3765,"error":0.0997},{"country":"Taiwan","actual":6.4228,"predicted":6.3706,"error":0.0522},{"country":"Panama","actual":6.4116,"predicted":5.9566,"error":0.455},{"country":"France","actual":6.4018,"predicted":6.3064,"error":0.0954},{"country":"Italy","actual":6.0124,"predicted":5.7816,"error":0.2308},{"country":"Guatemala","actual":6.0048,"predicted":5.5267,"error":0.4781},{"country":"Kazakhstan","actual":5.9554,"predicted":5.7234,"error":0.232},{"country":"Uzbekistan","actual":5.887,"predicted":5.5986,"error":0.2884},{"country":"Ecuador","actual":5.872,"predicted":5.6308,"error":0.2412},{"country":"Bolivia","actual":5.8372,"predicted":5.4714,"error":0.3658},{"country":"Moldova","actual":5.8126,"predicted":5.3286,"error":0.484},{"country":"Kosovo","actual":5.8062,"predicted":5.3944,"error":0.4118},{"country":"Russia","actual":5.7878,"predicted":5.8238,"error":0.036},{"country":"Kuwait","actual":5.7874,"predicted":6.0214,"error":0.2340},{"country":"Kyrgyzstan","actual":5.7452,"predicted":5.2636,"error":0.4816},{"country":"Belarus","actual":5.7132,"predicted":5.688,"error":0.0252},{"country":"Libya","actual":5.6684,"predicted":5.5432,"error":0.1252},{"country":"Turkey","actual":5.6484,"predicted":5.6078,"error":0.0406},{"country":"Venezuela","actual":5.6404,"predicted":5.7068,"error":0.0664},{"country":"Malaysia","actual":5.6296,"predicted":5.7238,"error":0.0942},{"country":"Japan","actual":5.6202,"predicted":5.7492,"error":0.129},{"country":"South Korea","actual":5.6014,"predicted":5.8418,"error":0.2404},{"country":"Paraguay","actual":5.5896,"predicted":5.3914,"error":0.1982},{"country":"Honduras","actual":5.5752,"predicted":5.2778,"error":0.2974},{"country":"Peru","actual":5.5468,"predicted":5.4692,"error":0.0776},{"country":"Portugal","actual":5.5024,"predicted":5.6336,"error":0.1312},{"country":"Latvia","actual":5.4972,"predicted":5.5368,"error":0.0396},{"country":"South Africa","actual":5.4902,"predicted":4.9986,"error":0.4916},{"country":"Algeria","actual":5.4886,"predicted":5.2074,"error":0.2812},{"country":"Romania","actual":5.4808,"predicted":5.5554,"error":0.0746},{"country":"Jamaica","actual":5.4786,"predicted":5.2946,"error":0.184},{"country":"Northern Cyprus","actual":5.4674,"predicted":5.9394,"error":0.472},{"country":"Cyprus","actual":5.4558,"predicted":5.7788,"error":0.323},{"country":"Kosovo*","actual":5.4018,"predicted":5.3274,"error":0.0744},{"country":"El Salvador","actual":5.3792,"predicted":5.1836,"error":0.1956},{"country":"Mauritius","actual":5.3644,"predicted":5.4978,"error":0.1334},{"country":"Serbia","actual":5.3596,"predicted":5.4052,"error":0.0456},{"country":"Hungary","actual":5.3484,"predicted":5.4518,"error":0.1034},{"country":"Estonia","actual":5.3398,"predicted":5.5862,"error":0.2464},{"country":"Jordan","actual":5.3162,"predicted":5.0344,"error":0.2818},{"country":"China","actual":5.2978,"predicted":5.5218,"error":0.224},{"country":"Montenegro","actual":5.2974,"predicted":5.3488,"error":0.0514},{"country":"Bangladesh","actual":5.2466,"predicted":4.9082,"error":0.3384},{"country":"Somalia","actual":5.2184,"predicted":4.2996,"error":0.9188},{"country":"Kosovo**","actual":5.1898,"predicted":5.2414,"error":0.0516},{"country":"Morocco","actual":5.1788,"predicted":5.008,"error":0.1708},{"country":"Indonesia","actual":5.1724,"predicted":5.2036,"error":0.0312},{"country":"Azerbaijan","actual":5.1694,"predicted":5.3358,"error":0.1664},{"country":"Vietnam","actual":5.1628,"predicted":5.0258,"error":0.137},{"country":"Tajikistan","actual":5.1536,"predicted":5.0454,"error":0.1082},{"country":"Pakistan","actual":5.1528,"predicted":4.8734,"error":0.2794},{"country":"Cameroon","actual":5.1454,"predicted":4.4752,"error":0.6702},{"country":"Bahrain","actual":5.1408,"predicted":5.5538,"error":0.413},{"country":"Belarus*","actual":5.132,"predicted":5.5684,"error":0.4364},{"country":"Libya*","actual":5.1068,"predicted":5.1834,"error":0.0766},{"country":"North Cyprus","actual":5.0934,"predicted":5.8368,"error":0.7434},{"country":"Nicaragua","actual":5.0898,"predicted":5.0098,"error":0.08},{"country":"Nigeria","actual":5.074,"predicted":4.4976,"error":0.5764},{"country":"Philippines","actual":5.0642,"predicted":4.9782,"error":0.086},{"country":"Albania","actual":5.0548,"predicted":5.0596,"error":0.0048},{"country":"North Macedonia","actual":5.0068,"predicted":5.0844,"error":0.0776},{"country":"Turkmenistan","actual":4.9932,"predicted":5.3042,"error":0.311},{"country":"Gabon","actual":4.9814,"predicted":4.9038,"error":0.0776},{"country":"Bosnia and Herzegovina","actual":4.9706,"predicted":5.0782,"error":0.1076},{"country":"Armenia","actual":4.9626,"predicted":4.9802,"error":0.0176},{"country":"Ghana","actual":4.9562,"predicted":4.7248,"error":0.2314},{"country":"Senegal","actual":4.9244,"predicted":4.582,"error":0.3424},{"country":"Laos","actual":4.876,"predicted":4.8648,"error":0.0112},{"country":"Tunisia","actual":4.8686,"predicted":5.044,"error":0.1754},{"country":"Palestinian Territories","actual":4.8408,"predicted":4.4982,"error":0.3426},{"country":"Kosovo***","actual":4.8226,"predicted":5.0494,"error":0.2268},{"country":"Nepal","actual":4.7904,"predicted":4.6738,"error":0.1166},{"country":"Bhutan","actual":4.7428,"predicted":5.0898,"error":0.3470},{"country":"Ethiopia","actual":4.7056,"predicted":4.2458,"error":0.4598},{"country":"Sri Lanka","actual":4.7046,"predicted":4.9124,"error":0.2078},{"country":"Myanmar","actual":4.696,"predicted":4.5658,"error":0.1302},{"country":"Iran","actual":4.6856,"predicted":5.0742,"error":0.3886},{"country":"Ukraine","actual":4.6524,"predicted":4.9188,"error":0.2664},{"country":"Iraq","actual":4.6446,"predicted":4.7898,"error":0.1452},{"country":"South Sudan","actual":4.6332,"predicted":3.4872,"error":1.1460},{"country":"Zambia","actual":4.5984,"predicted":4.2028,"error":0.3956},{"country":"Mozambique","actual":4.5784,"predicted":3.7626,"error":0.8158},{"country":"Cambodia","actual":4.5636,"predicted":4.5698,"error":0.0062},{"country":"Kenya","actual":4.5162,"predicted":4.2928,"error":0.2234},{"country":"Congo (Brazzaville)","actual":4.5132,"predicted":4.1526,"error":0.3606},{"country":"Lebanon","actual":4.5088,"predicted":4.9716,"error":0.4628},{"country":"Egypt","actual":4.4982,"predicted":4.7978,"error":0.2996},{"country":"Mauritania","actual":4.4864,"predicted":4.4228,"error":0.0636},{"country":"Angola","actual":4.4752,"predicted":4.1668,"error":0.3084},{"country":"Niger","actual":4.4648,"predicted":3.9792,"error":0.4856},{"country":"Zimbabwe","actual":4.4564,"predicted":4.0256,"error":0.4308},{"country":"Ivory Coast","actual":4.4444,"predicted":4.1616,"error":0.2828},{"country":"Sudan","actual":4.4138,"predicted":4.3762,"error":0.0376},{"country":"Uganda","actual":4.4012,"predicted":4.0598,"error":0.3414},{"country":"Benin","actual":4.3996,"predicted":4.0458,"error":0.3538},{"country":"Cameroon*","actual":4.3716,"predicted":4.2288,"error":0.1428},{"country":"Chad","actual":4.3594,"predicted":3.7568,"error":0.6026},{"country":"Sierra Leone","actual":4.3548,"predicted":3.6278,"error":0.727},{"country":"Madagascar","actual":4.3504,"predicted":3.9032,"error":0.4472},{"country":"Liberia","actual":4.3448,"predicted":3.7836,"error":0.5612},{"country":"Mali","actual":4.3366,"predicted":3.9844,"error":0.3522},{"country":"Botswana","actual":4.332,"predicted":4.4878,"error":0.1558},{"country":"Haiti","actual":4.3168,"predicted":4.0162,"error":0.3006},{"country":"Myanmar*","actual":4.3082,"predicted":4.4398,"error":0.1316},{"country":"Burkina Faso","actual":4.2984,"predicted":4.0718,"error":0.2266},{"country":"Guinea","actual":4.2696,"predicted":3.8714,"error":0.3982},{"country":"India","actual":4.2668,"predicted":4.6022,"error":0.3354},{"country":"Djibouti","actual":4.2486,"predicted":4.2498,"error":0.0012},{"country":"Yemen","actual":4.1948,"predicted":4.2088,"error":0.014},{"country":"Malawi","actual":4.1786,"predicted":3.7944,"error":0.3842},{"country":"Togo","actual":4.1658,"predicted":3.9272,"error":0.2386},{"country":"Comoros","actual":4.1596,"predicted":4.1742,"error":0.0146},{"country":"Rwanda","actual":4.1494,"predicted":4.0268,"error":0.1226},{"country":"Syria","actual":4.1336,"predicted":4.3682,"error":0.2346},{"country":"Afghanistan","actual":4.1068,"predicted":3.9982,"error":0.1086},{"country":"Tanzania","actual":3.9474,"predicted":4.1238,"error":0.1764},{"country":"Burundi","actual":3.7064,"predicted":3.4638,"error":0.2426},{"country":"Central African Republic","actual":3.6888,"predicted":3.3638,"error":0.325},{"country":"Congo (Kinshasa)","actual":3.6722,"predicted":3.8148,"error":0.1426}];
+
+const REGION_DATA = [
+  {region:"Australia & NZ",avg:7.304,n:4},
+  {region:"North America",avg:7.264,n:4},
+  {region:"Western Europe",avg:6.688,n:42},
+  {region:"Latin Am. & Caribbean",avg:6.122,n:46},
+  {region:"Eastern Asia",avg:5.625,n:12},
+  {region:"Mid. East & N. Africa",avg:5.397,n:39},
+  {region:"Central & Eastern Europe",avg:5.352,n:58},
+  {region:"Southeastern Asia",avg:5.328,n:18},
+  {region:"Southern Asia",avg:4.572,n:14},
+  {region:"Sub-Saharan Africa",avg:4.170,n:78},
+];
+
+const STATUS_DATA = [
+  {status:"VALID",count:762,color:"#26de81"},
+  {status:"INVALID_SCHEMA",count:12,color:"#f7b731"},
+  {status:"INVALID_VALUES",count:8,color:"#fc5c65"},
+  {status:"PREDICTION_ERROR",count:1,color:"#a55eea"},
+];
+
+// ── CHART DEFAULTS ──────────────────────────────────────────────────
+Chart.defaults.color = '#7c82a0';
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+
+const gridColor = 'rgba(46,50,72,0.7)';
+const baseTooltip = {
+  backgroundColor: '#1a1d27',
+  borderColor: '#2e3248',
+  borderWidth: 1,
+  padding: 10,
+  titleColor: '#e8eaf0',
+  bodyColor: '#7c82a0',
+};
+
+// ── CHART 1: Country Bar ──────────────────────────────────────────────
+new Chart(document.getElementById('chartCountry'), {
+  type: 'bar',
+  data: {
+    labels: TOP20.map(d => d.country),
+    datasets: [
+      {
+        label: 'Actual Score',
+        data: TOP20.map(d => d.actual),
+        backgroundColor: 'rgba(108,99,255,0.75)',
+        borderRadius: 4,
+      },
+      {
+        label: 'Predicted Score',
+        data: TOP20.map(d => d.predicted),
+        backgroundColor: 'rgba(0,201,167,0.65)',
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top' }, tooltip: { ...baseTooltip } },
+    scales: {
+      x: { grid: { color: gridColor }, ticks: { maxRotation: 45 } },
+      y: {
+        grid: { color: gridColor },
+        title: { display: true, text: 'Happiness Score' },
+        min: 5.5, max: 8.0,
+      }
+    }
+  }
+});
+
+// ── CHART 2: Status Donut ────────────────────────────────────────────
+const total = STATUS_DATA.reduce((s, d) => s + d.count, 0);
+new Chart(document.getElementById('chartStatus'), {
+  type: 'doughnut',
+  data: {
+    labels: STATUS_DATA.map(d => d.status),
+    datasets: [{
+      data: STATUS_DATA.map(d => d.count),
+      backgroundColor: STATUS_DATA.map(d => d.color),
+      borderColor: '#1a1d27',
+      borderWidth: 3,
+      hoverOffset: 6,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '68%',
+    plugins: {
+      legend: { display: false },
+      tooltip: { ...baseTooltip, callbacks: {
+        label: ctx => ` ${ctx.label}: ${ctx.raw} (${(ctx.raw/total*100).toFixed(1)}%)`
+      }}
+    }
+  }
+});
+
+// Status pills
+const pillsEl = document.getElementById('statusPills');
+STATUS_DATA.forEach(d => {
+  const pct = d.count / total * 100;
+  pillsEl.innerHTML += `
+    <div class="status-pill">
+      <div class="sp-label"><span class="sp-dot" style="background:${d.color}"></span>${d.status}</div>
+      <div class="sp-bar-wrap"><div class="sp-bar" style="width:${pct}%;background:${d.color}"></div></div>
+      <div class="sp-count" style="color:${d.color}">${d.count}</div>
+    </div>`;
+});
+
+// ── CHART 3: Scatter ─────────────────────────────────────────────────
+const regionColors = {
+  "Western Europe":"rgba(108,99,255,0.7)",
+  "Latin America and Caribbean":"rgba(0,201,167,0.7)",
+  "North America":"rgba(247,183,49,0.7)",
+  "Australia and New Zealand":"rgba(252,92,101,0.7)",
+  "Eastern Asia":"rgba(38,222,129,0.7)",
+  "Middle East and Northern Africa":"rgba(253,150,68,0.7)",
+  "Central and Eastern Europe":"rgba(165,94,234,0.7)",
+  "Southeastern Asia":"rgba(75,207,250,0.7)",
+  "Southern Asia":"rgba(255,107,107,0.7)",
+  "Sub-Saharan Africa":"rgba(200,214,229,0.7)",
+  "Unknown":"rgba(100,110,130,0.5)",
+};
+
+// Build scatter data — sample evenly to keep chart fast
+const scatterSample = ALL_COUNTRIES.map(d => ({
+  x: d.actual, y: d.predicted,
+  country: d.country,
+  color: 'rgba(108,99,255,0.6)'
+}));
+
+// Perfect-fit diagonal
+const diagMin = 3.0, diagMax = 8.0;
+
+new Chart(document.getElementById('chartScatter'), {
+  type: 'scatter',
+  data: {
+    datasets: [
+      {
+        label: 'Predictions',
+        data: scatterSample.map(d => ({x: d.x, y: d.y, country: d.country})),
+        backgroundColor: 'rgba(108,99,255,0.55)',
+        pointRadius: 5,
+        pointHoverRadius: 7,
+      },
+      {
+        label: 'Perfect Fit',
+        data: [{x: diagMin, y: diagMin}, {x: diagMax, y: diagMax}],
+        type: 'line',
+        borderColor: 'rgba(252,92,101,0.8)',
+        borderWidth: 1.5,
+        borderDash: [6,4],
+        pointRadius: 0,
+        fill: false,
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top' },
+      tooltip: {
+        ...baseTooltip,
+        callbacks: {
+          label: ctx => {
+            if (ctx.datasetIndex === 0) {
+              return ` ${ctx.raw.country || ''}: actual=${ctx.raw.x?.toFixed(3)}, predicted=${ctx.raw.y?.toFixed(3)}`;
+            }
+            return ` Perfect fit line`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: gridColor },
+        title: { display: true, text: 'Actual Happiness Score' },
+        min: 3, max: 8.2
+      },
+      y: {
+        grid: { color: gridColor },
+        title: { display: true, text: 'Predicted Happiness Score' },
+        min: 3, max: 8.2
+      }
+    }
+  }
+});
+
+// ── CHART 4a: Year Line ───────────────────────────────────────────────
+new Chart(document.getElementById('chartYearLine'), {
+  type: 'line',
+  data: {
+    labels: YEAR_DATA.map(d => d.year),
+    datasets: [
+      {
+        label: 'Avg Actual',
+        data: YEAR_DATA.map(d => d.avg_actual),
+        borderColor: '#6c63ff',
+        backgroundColor: 'rgba(108,99,255,0.12)',
+        fill: true,
+        tension: 0.35,
+        pointRadius: 5, pointHoverRadius: 7,
+      },
+      {
+        label: 'Avg Predicted',
+        data: YEAR_DATA.map(d => d.avg_predicted),
+        borderColor: '#00c9a7',
+        backgroundColor: 'rgba(0,201,167,0.08)',
+        fill: true,
+        tension: 0.35,
+        pointRadius: 5, pointHoverRadius: 7,
+        borderDash: [5, 3],
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top' }, tooltip: { ...baseTooltip } },
+    scales: {
+      x: { grid: { color: gridColor } },
+      y: {
+        grid: { color: gridColor },
+        title: { display: true, text: 'Happiness Score' },
+        min: 4.8, max: 5.8
+      }
+    }
+  }
+});
+
+// ── CHART 4b: Year Error ──────────────────────────────────────────────
+new Chart(document.getElementById('chartYearError'), {
+  type: 'bar',
+  data: {
+    labels: YEAR_DATA.map(d => d.year),
+    datasets: [{
+      label: 'Avg Absolute Error',
+      data: YEAR_DATA.map(d => d.avg_abs_error),
+      backgroundColor: YEAR_DATA.map(d =>
+        d.avg_abs_error < 0.40 ? 'rgba(38,222,129,0.75)' :
+        d.avg_abs_error < 0.45 ? 'rgba(247,183,49,0.75)' :
+        'rgba(252,92,101,0.75)'
+      ),
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { ...baseTooltip } },
+    scales: {
+      x: { grid: { color: gridColor } },
+      y: {
+        grid: { color: gridColor },
+        title: { display: true, text: 'Abs Error' },
+        min: 0.35, max: 0.5,
+      }
+    }
+  }
+});
+
+// ── CHART 5: Region ───────────────────────────────────────────────────
+const regionColors2 = [
+  '#6c63ff','#00c9a7','#f7b731','#fc5c65','#26de81',
+  '#fd9644','#a55eea','#4bcffa','#ff6b6b','#c8d6e5'
+];
+new Chart(document.getElementById('chartRegion'), {
+  type: 'bar',
+  data: {
+    labels: REGION_DATA.map(d => d.region),
+    datasets: [{
+      label: 'Avg Happiness Score',
+      data: REGION_DATA.map(d => d.avg),
+      backgroundColor: regionColors2,
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        ...baseTooltip,
+        callbacks: {
+          label: ctx => {
+            const r = REGION_DATA[ctx.dataIndex];
+            return ` Score: ${r.avg} (n=${r.n} records)`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: gridColor },
+        title: { display: true, text: 'Average Happiness Score' },
+        min: 3.5, max: 8.0
+      },
+      y: { grid: { color: 'transparent' } }
+    }
+  }
+});
+
+// ── COUNTRY TABLE ─────────────────────────────────────────────────────
+function renderTable(data) {
+  const tbody = document.getElementById('countryTableBody');
+  tbody.innerHTML = data.map((d, i) => {
+    const errClass = d.error < 0.25 ? 'err-low' : d.error < 0.6 ? 'err-mid' : 'err-high';
+    return `<tr>
+      <td style="color:var(--text-muted)">${i+1}</td>
+      <td>${d.country}</td>
+      <td>${d.actual.toFixed(3)}</td>
+      <td>${d.predicted.toFixed(3)}</td>
+      <td class="${errClass}">${d.error.toFixed(3)}</td>
+    </tr>`;
+  }).join('');
+}
+renderTable(ALL_COUNTRIES);
+
+document.getElementById('countrySearch').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  renderTable(q ? ALL_COUNTRIES.filter(d => d.country.toLowerCase().includes(q)) : ALL_COUNTRIES);
+});
+</script>
+</body>
+</html>
