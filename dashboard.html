@@ -312,6 +312,185 @@
     .sv-canvas { grid-template-columns: 1fr; }
     .sv-arrow  { display: none; }
   }
+
+  /* ── CLEANING DECISIONS LOG ── */
+  .dec-table { width: 100%; border-collapse: collapse; font-size: 0.79rem; }
+  .dec-table th {
+    background: var(--surface2); color: var(--text-muted); padding: 9px 14px;
+    text-align: left; font-size: 0.69rem; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .dec-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+  .dec-table tr:last-child td { border-bottom: none; }
+  .dec-table tr:hover td { background: rgba(255,255,255,0.015); }
+  .dec-table tr.dec-extra td { background: rgba(108,99,255,0.04); }
+  .dec-req { display: flex; flex-direction: column; gap: 5px; min-width: 130px; }
+  .dec-req-label { font-weight: 700; font-size: 0.77rem; color: var(--text); }
+  .dec-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; width: fit-content;
+  }
+  .db-ok   { background: rgba(38,222,129,0.12);  color: var(--green);   border: 1px solid rgba(38,222,129,0.3); }
+  .db-warn { background: rgba(247,183,49,0.12);  color: var(--accent3); border: 1px solid rgba(247,183,49,0.3); }
+  .db-info { background: rgba(108,99,255,0.12);  color: var(--accent);  border: 1px solid rgba(108,99,255,0.3); }
+  .db-drop { background: rgba(252,92,101,0.1);   color: var(--red);     border: 1px solid rgba(252,92,101,0.25); }
+  .dec-action {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.76rem; color: var(--accent2); line-height: 1.6;
+  }
+  .dec-action code { background: rgba(0,201,167,0.1); color: var(--accent2); padding: 1px 5px; border-radius: 4px; font-size: 0.9em; }
+  .dec-why { color: var(--text-muted); font-size: 0.77rem; line-height: 1.6; }
+  .dec-why strong { color: var(--text); }
+  .dec-why code { background: rgba(255,255,255,0.07); padding: 1px 5px; border-radius: 4px; font-size: 0.88em; font-family: 'JetBrains Mono', monospace; }
+  .dec-sep td { padding: 3px 0; background: rgba(108,99,255,0.06); font-size: 0.67rem; color: var(--text-muted); text-align: center; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* ── STEPS 3 & 4 ── */
+  .feat-table, .model-table { width: 100%; border-collapse: collapse; font-size: 0.79rem; }
+  .feat-table th, .model-table th {
+    background: var(--surface2); color: var(--text-muted); padding: 9px 12px;
+    text-align: left; font-size: 0.69rem; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .feat-table td, .model-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .feat-table tr:last-child td, .model-table tr:last-child td { border-bottom: none; }
+  .feat-table tr:hover td, .model-table tr:hover td { background: rgba(255,255,255,0.015); }
+  .f-base { background:rgba(108,99,255,0.12); color:var(--accent);  padding:2px 7px; border-radius:4px; font-size:0.65rem; font-weight:700; }
+  .f-eng  { background:rgba(0,201,167,0.12);  color:var(--accent2); padding:2px 7px; border-radius:4px; font-size:0.65rem; font-weight:700; }
+  .r-bar-wrap { height: 5px; background: var(--border); border-radius: 3px; min-width: 60px; margin-top: 4px; }
+  .r-bar { height: 100%; border-radius: 3px; background: var(--accent); }
+  .r-val { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-muted); }
+  .model-table tr.model-chosen td { background: rgba(0,201,167,0.05); }
+  .model-chosen-name { color: var(--accent2); font-weight: 700; }
+  .chosen-badge { background:rgba(0,201,167,0.15); color:var(--accent2); border:1px solid rgba(0,201,167,0.3); padding:2px 8px; border-radius:999px; font-size:0.63rem; font-weight:700; margin-left:6px; }
+  .skipped-badge { background:rgba(100,110,130,0.1); color:var(--text-muted); border:1px solid rgba(100,110,130,0.2); padding:2px 8px; border-radius:999px; font-size:0.63rem; font-weight:700; margin-left:6px; }
+  .m-score { font-family:'JetBrains Mono', monospace; font-size:0.77rem; }
+  .m-best  { color: var(--green); font-weight: 700; }
+  .m-mid   { color: var(--accent3); }
+  .m-low   { color: var(--red); }
+  .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .info-card {
+    padding: 14px 16px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface2);
+  }
+  .info-card h4 { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .info-card p  { font-size: 0.76rem; color: var(--text-muted); line-height: 1.55; }
+  .info-card code { background:rgba(255,255,255,0.07); padding:1px 5px; border-radius:4px; font-size:0.88em; font-family:'JetBrains Mono',monospace; }
+  .model-sel-card {
+    padding: 18px 20px; border-radius: 12px;
+    border: 1px solid rgba(0,201,167,0.35); background: rgba(0,201,167,0.05);
+  }
+  .model-sel-card h4 { font-size: 0.85rem; font-weight: 700; color: var(--accent2); margin-bottom: 10px; }
+  .model-sel-card p  { font-size: 0.79rem; color: var(--text-muted); line-height: 1.6; }
+  .model-sel-card strong { color: var(--text); }
+  .model-sel-card code { background:rgba(0,201,167,0.1); color:var(--accent2); padding:1px 5px; border-radius:4px; font-family:'JetBrains Mono',monospace; font-size:0.88em; }
+  .artifact-list { list-style: none; padding: 0; margin: 0; }
+  .artifact-list li { padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.78rem; display: flex; align-items: center; gap: 8px; }
+  .artifact-list li:last-child { border-bottom: none; }
+  .artifact-list code { font-family:'JetBrains Mono',monospace; color:var(--accent2); font-size:0.85rem; }
+  @media(max-width:900px) { .info-grid { grid-template-columns: 1fr; } }
+
+  /* ── STAR SCHEMA VISUAL ── */
+  .db-star-canvas {
+    display: grid;
+    grid-template-columns: 1fr 300px 1fr;
+    gap: 28px;
+    align-items: start;
+    margin-top: 8px;
+  }
+  .db-col-side { display: flex; flex-direction: column; gap: 0; }
+  .db-col-center { display: flex; flex-direction: column; align-items: stretch; justify-content: center; }
+  .db-card {
+    background: var(--surface2); border-radius: 10px;
+    padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+  }
+  .db-card.db-fact { border: 1.5px solid rgba(0,201,167,0.55); box-shadow: 0 0 24px rgba(0,201,167,0.10); }
+  .db-card.db-dim  { border: 1.5px solid rgba(56,189,248,0.38); }
+  .db-card.db-raw  { border: 1.5px solid rgba(252,92,101,0.45); }
+  .db-card-title {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 600; font-size: 0.75rem; color: var(--text);
+    margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  .db-type-badge {
+    font-size: 0.58rem; font-weight: 700; border-radius: 4px;
+    padding: 2px 6px; letter-spacing: 0.5px; flex-shrink: 0;
+  }
+  .db-type-badge.fact { background: rgba(0,201,167,0.2);   color: #00c9a7; border: 1px solid rgba(0,201,167,0.45); }
+  .db-type-badge.dim  { background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); }
+  .db-type-badge.raw  { background: rgba(252,92,101,0.15); color: #fc5c65; border: 1px solid rgba(252,92,101,0.4); }
+  .db-pills { display: flex; flex-direction: column; gap: 5px; }
+  .db-pill {
+    display: inline-block; border-radius: 4px; padding: 3px 9px;
+    font-size: 0.64rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .db-pill.pk      { background: rgba(247,183,49,0.14); border: 1px solid rgba(247,183,49,0.5);  color: #f7b731; }
+  .db-pill.fk      { background: rgba(56,189,248,0.10); border: 1px solid rgba(56,189,248,0.4);  color: #38bdf8; }
+  .db-pill.measure { background: rgba(0,201,167,0.10);  border: 1px solid rgba(0,201,167,0.35);  color: #00c9a7; }
+  .db-pill.attr    { background: rgba(108,99,255,0.10); border: 1px solid rgba(108,99,255,0.28); color: #a89dff; }
+  .db-check {
+    margin-top: 8px; font-size: 0.59rem; color: var(--text-muted);
+    border-top: 1px dashed var(--border); padding-top: 6px; line-height: 1.5;
+  }
+  .db-arrow-v {
+    text-align: center; color: var(--accent2); font-size: 1rem;
+    padding: 6px 0; line-height: 1;
+  }
+  .db-rel-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+    color: var(--accent); padding: 3px 0; letter-spacing: 0.3px;
+  }
+  .db-legend {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    margin: 10px 0 18px; font-size: 0.69rem;
+  }
+  .db-legend-item { display: flex; align-items: center; gap: 6px; color: var(--text-muted); }
+  @media(max-width:900px) { .db-star-canvas { grid-template-columns: 1fr; } }
+
+  /* ── KPI TAB NAVIGATION ── */
+  .kpi-nav {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 24px 0 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px 16px;
+  }
+  .kpi-tab-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    flex: 1; min-width: 110px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px; cursor: pointer;
+    color: var(--text-muted); transition: border-color 0.18s, background 0.18s, color 0.18s;
+  }
+  .kpi-tab-btn:hover { border-color: var(--accent); color: var(--text); }
+  .kpi-tab-btn.active {
+    border-color: var(--accent); background: rgba(108,99,255,0.12);
+    color: var(--accent);
+  }
+  .kpi-tab-btn .tab-num {
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.82rem;
+  }
+  .kpi-tab-btn .tab-name { font-size: 0.68rem; }
+  .kpi-tab-btn[data-tab="kpi2"].active { border-color: var(--accent2); background: rgba(0,201,167,0.10); color: var(--accent2); }
+  .kpi-tab-btn[data-tab="kpi3"].active { border-color: var(--accent);  background: rgba(108,99,255,0.12); color: var(--accent); }
+  .kpi-tab-btn[data-tab="kpi4"].active { border-color: var(--accent3); background: rgba(247,183,49,0.10); color: var(--accent3); }
+  .kpi-tab-btn[data-tab="bonus"].active { border-color: var(--green);  background: rgba(38,222,129,0.08); color: var(--green); }
+  .kpi-panel { display: none; }
+  .kpi-panel.active { display: block; }
+  .kpi-panel-header {
+    display: flex; align-items: center; gap: 14px;
+    margin: 20px 0 16px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .kpi-panel-badge {
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    font-size: 0.7rem; border-radius: 6px; padding: 4px 10px;
+    background: rgba(108,99,255,0.15); border: 1px solid rgba(108,99,255,0.3);
+    color: var(--accent); white-space: nowrap;
+  }
+  .kpi-panel-badge.b2 { background:rgba(0,201,167,0.12);  border-color:rgba(0,201,167,0.35);  color:var(--accent2); }
+  .kpi-panel-badge.b3 { background:rgba(108,99,255,0.12); border-color:rgba(108,99,255,0.3);   color:var(--accent); }
+  .kpi-panel-badge.b4 { background:rgba(247,183,49,0.12); border-color:rgba(247,183,49,0.35);  color:var(--accent3); }
+  .kpi-panel-badge.bx { background:rgba(38,222,129,0.10); border-color:rgba(38,222,129,0.3);   color:var(--green); }
+  .kpi-panel-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .kpi-panel-desc  { font-size: 0.76rem; color: var(--text-muted); }
+  @media(max-width:700px) { .kpi-tab-btn { min-width: 80px; padding: 10px 8px; } }
 </style>
 </head>
 <body>
@@ -545,6 +724,152 @@
     </div>
   </div>
 
+  <!-- ═══ STEP 2 — CLEANING & HARMONIZATION ═══ -->
+  <div class="section-title" style="margin-top:8px">Step 2 — Data Cleaning &amp; Harmonization · Justified Decisions</div>
+
+  <div class="chart-card">
+    <h3>Cleaning Decision Log</h3>
+    <p class="chart-desc">Every decision directly follows from an EDA finding. Each row maps one rubric requirement to the action taken and its justification.</p>
+    <table class="dec-table">
+      <thead>
+        <tr>
+          <th style="width:160px">Requirement</th>
+          <th style="width:38%">Decision &amp; Implementation</th>
+          <th>Justification from EDA</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- 1. Column names -->
+        <tr>
+          <td class="dec-req">
+            <span class="dec-req-label">1. Standardize column names</span>
+            <span class="dec-badge db-ok">✓ Done</span>
+          </td>
+          <td class="dec-action">
+            Renamed all source columns to snake_case via <code>feature_maps</code> dictionary.<br>
+            7 different raw name variants → 1 canonical name per concept.
+          </td>
+          <td class="dec-why">
+            <strong>EDA found 5 distinct naming conventions:</strong> verbose phrases
+            (<code>Economy (GDP per Capita)</code>), dot-notation (<code>Happiness.Score</code>),
+            plain words (<code>Score</code>), space-separated (<code>GDP per capita</code>),
+            and re-worded concepts (<code>Social support</code> vs <code>Family</code>).
+            Canonical names required for consistent downstream access and Kafka schema validation.
+          </td>
+        </tr>
+
+        <!-- 2. Data types -->
+        <tr>
+          <td class="dec-req">
+            <span class="dec-req-label">2. Standardize data types</span>
+            <span class="dec-badge db-ok">✓ No cast needed</span>
+          </td>
+          <td class="dec-action">
+            All 6 numeric features already <code>float64</code> — no conversion applied.<br>
+            <code>year</code> derived as <code>int</code> from filename.<br>
+            <code>country</code> / <code>region</code> remain <code>string</code>.
+          </td>
+          <td class="dec-why">
+            <strong>EDA dtype check</strong> confirmed all numeric features are consistently
+            <code>float64</code> across every source file. Rank columns (<code>int64</code>)
+            were dropped (see row 4), removing the only type inconsistency.
+            No coercion risk — zero type casting errors possible.
+          </td>
+        </tr>
+
+        <!-- 3. Missing values -->
+        <tr>
+          <td class="dec-req">
+            <span class="dec-req-label">3. Handle missing values</span>
+            <span class="dec-badge db-warn">1 null found</span>
+          </td>
+          <td class="dec-action">
+            1 null in 2018 <code>Perceptions of corruption</code>
+            → filled with <strong>year-2018 median</strong> (≈ 0.082).<br>
+            Rows missing <code>happiness_score</code> → dropped (0 found).
+          </td>
+          <td class="dec-why">
+            <strong>EDA found only 1 null</strong> across all 782 rows (2018 file).
+            Dropping the row was disproportionate for a single missing feature value.
+            <strong>Year-level median</strong> was chosen over global median to avoid
+            cross-year contamination — corruption scores shifted between reporting
+            periods and a global fill would import that bias.
+          </td>
+        </tr>
+
+        <!-- 4. Schema inconsistencies -->
+        <tr>
+          <td class="dec-req">
+            <span class="dec-req-label">4. Resolve schema inconsistencies</span>
+            <span class="dec-badge db-drop">7 cols dropped</span>
+          </td>
+          <td class="dec-action">
+            Dropped: <code>Dystopia Residual</code>, <code>Happiness Rank</code>,
+            <code>Standard Error</code>, <code>Lower/Upper CI</code>,
+            <code>Whisker.high</code>, <code>Whisker.low</code>.<br>
+            Harmonized: <code>Family</code> = <code>Social support</code> → <code>family</code>.
+          </td>
+          <td class="dec-why">
+            <strong>EDA identified these as non-predictive or leakage risks:</strong><br>
+            • <code>Dystopia Residual</code> = mathematical residual of the WHR model itself
+            — encodes the target score directly (leakage).<br>
+            • <code>Happiness Rank</code> = derived 1:1 from target (leakage).<br>
+            • <code>Standard Error</code>, <code>CI</code>, <code>Whisker</code> = measurement
+            uncertainty metrics, present in only 1–2 years (schema inconsistency, no predictive value).<br>
+            • <code>Family</code> vs <code>Social support</code> confirmed same construct via
+            correlation analysis (r ≈ 0.74 with happiness score in both naming periods).
+          </td>
+        </tr>
+
+        <!-- 5. Merge -->
+        <tr>
+          <td class="dec-req">
+            <span class="dec-req-label">5. Merge into unified dataset</span>
+            <span class="dec-badge db-ok">✓ 782 rows</span>
+          </td>
+          <td class="dec-action">
+            <code>pd.concat</code> of 5 harmonized DataFrames.<br>
+            Result: <code>782 rows × 10 cols</code><br>
+            Saved as <code>happiness_unified.csv</code>.
+          </td>
+          <td class="dec-why">
+            <strong>EDA confirmed</strong> all 5 source files share the same 10 canonical
+            columns after harmonization — vertical concatenation is valid with no column
+            mismatch. Duplicate check post-merge: <strong>0 duplicates introduced</strong>.
+            Row count verified: 158 + 157 + 155 + 156 + 156 = <strong>782</strong>.
+          </td>
+        </tr>
+
+        <!-- separator -->
+        <tr class="dec-sep"><td colspan="3">+ Additional decision required by EDA findings</td></tr>
+
+        <!-- 6. Outliers -->
+        <tr class="dec-extra">
+          <td class="dec-req">
+            <span class="dec-req-label">+ Outlier handling</span>
+            <span class="dec-badge db-info">Explicit decision</span>
+          </td>
+          <td class="dec-action">
+            Outliers <strong>retained</strong> — no removal, capping, or Winsorization applied.<br>
+            Features with outliers: <code>generosity</code> (max=0.838),
+            <code>corruption</code> (max=0.552).
+          </td>
+          <td class="dec-why">
+            <strong>EDA boxplots showed outliers in 2 features.</strong>
+            Investigation revealed these are <strong>genuine country-level realities</strong>,
+            not data errors: high generosity values correspond to Myanmar and Indonesia
+            (culturally high charitable donation rates); high corruption values correspond to
+            Rwanda and Qatar. Removing them would systematically bias predictions for
+            developing and atypical economies — the model should learn from these edge cases,
+            not ignore them.
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
   <!-- UNIFIED SCHEMA PROPOSAL — visual -->
   <div class="chart-card">
     <h3>Unified Schema Proposal — Step 2 Output (Data Cleaning &amp; Harmonization)</h3>
@@ -735,15 +1060,748 @@
     </div><!-- /sv-wrap -->
   </div>
 
+  <!-- ═══ STEP 3 — FEATURE ENGINEERING ═══ -->
+  <div class="section-title" style="margin-top:8px">Step 3 — Feature Engineering · Feature Selection &amp; Justification</div>
+
+  <!-- Feature table + correlation image -->
+  <div class="chart-grid wide">
+
+    <div class="chart-card">
+      <h3>Feature Selection — All 8 Features Used by the Model</h3>
+      <p class="chart-desc">6 base features selected from EDA correlation analysis + 2 engineered composite features. All Pearson r values against <code>happiness_score</code>.</p>
+      <table class="feat-table">
+        <thead>
+          <tr><th>Feature</th><th>Type</th><th>Pearson r ↔ happiness_score</th><th>Selection Justification</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace;color:var(--accent2)">positive_factors</td>
+            <td><span class="f-eng">engineered</span></td>
+            <td>
+              <span class="r-val">≈ 0.84</span>
+              <div class="r-bar-wrap"><div class="r-bar" style="width:84%;background:var(--accent2)"></div></div>
+            </td>
+            <td style="font-size:0.75rem;color:var(--text-muted)">GDP + freedom + generosity − corruption. Composite prosperity index — strongest single predictor.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace;color:var(--accent2)">social_wellbeing</td>
+            <td><span class="f-eng">engineered</span></td>
+            <td>
+              <span class="r-val">≈ 0.82</span>
+              <div class="r-bar-wrap"><div class="r-bar" style="width:82%;background:var(--accent2)"></div></div>
+            </td>
+            <td style="font-size:0.75rem;color:var(--text-muted)">family + health. Combines two high-correlation features into a composite social support dimension.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace;color:var(--accent)">gdp</td>
+            <td><span class="f-base">base</span></td>
+            <td>
+              <span class="r-val">≈ 0.78</span>
+              <div class="r-bar-wrap"><div class="r-bar" style="width:78%"></div></div>
+            </td>
+            <td style="font-size:0.75rem;color:var(--text-muted)">Strongest individual EDA predictor. Economic prosperity is the primary happiness driver in WHR research.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace;color:var(--accent)">health</td>
+            <td><span class="f-base">base</span></td>
+            <td>
+              <span class="r-val">≈ 0.75</span>
+              <div class="r-bar-wrap"><div class="r-bar" style="width:75%"></div></div>
+            </td>
+            <td style="font-size:0.75rem;color:var(--text-muted)">Life expectancy strongly correlated with happiness. Retained separately from social_wellbeing to provide the model independent signal.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace;color:var(--accent)">family</td>
+            <td><span class="f-base">base</span></td>
+            <td>
+              <span class="r-val">≈ 0.73</span>
+              <div class="r-bar-wrap"><div class="r-bar" style="width:73%"></div></div>
+            </td>
+            <td style="font-size:0.75rem;color:var(--text-muted)">Social support consistently ranked as top-3 predictor in WHR. Retained despite overlap with social_wellbeing.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace;color:var(--accent)">freedom</td>
+            <td><span class="f-base">base</span></td>
+            <td>
+              <span class="r-val">≈ 0.57</span>
+              <div class="r-bar-wrap"><div class="r-bar" style="width:57%"></div></div>
+            </td>
+            <td style="font-size:0.75rem;color:var(--text-muted)">Moderate correlation. Meaningful predictor especially for separating mid-range countries.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace;color:var(--accent)">corruption</td>
+            <td><span class="f-base">base</span></td>
+            <td>
+              <span class="r-val">≈ 0.40</span>
+              <div class="r-bar-wrap"><div class="r-bar" style="width:40%"></div></div>
+            </td>
+            <td style="font-size:0.75rem;color:var(--text-muted)">Moderate. Retained because corruption perception is a known socioeconomic predictor. Captured in positive_factors.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace;color:var(--accent)">generosity</td>
+            <td><span class="f-base">base</span></td>
+            <td>
+              <span class="r-val">≈ 0.18</span>
+              <div class="r-bar-wrap"><div class="r-bar" style="width:18%"></div></div>
+            </td>
+            <td style="font-size:0.75rem;color:var(--text-muted)">Weakest predictor but retained — it provides orthogonal variance and contributes to positive_factors composite.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="chart-card">
+      <h3>Feature Correlation with Happiness Score</h3>
+      <p class="chart-desc">Bar chart of Pearson r for all 8 features. Engineered features outperform all base features individually.</p>
+      <img src="data/processed/feature_correlation.png" class="eda-img" alt="Feature correlation bar chart" />
+    </div>
+
+  </div>
+
+  <!-- Feature engineering decisions (leakage, categorical, scaling) -->
+  <div class="info-grid">
+
+    <div class="info-card">
+      <h4><span style="color:var(--green)">✓</span> Target Leakage — Avoided</h4>
+      <p>
+        <strong>Dropped in Step 2:</strong><br>
+        • <code>Happiness Rank</code> — derived 1:1 from <code>happiness_score</code><br>
+        • <code>Dystopia Residual</code> — encodes the WHR target score directly<br><br>
+        All 8 selected features are <strong>independent inputs</strong> from the original survey,
+        not computed from the target variable.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h4><span style="color:var(--accent3)">◎</span> Categorical Data — No Encoding Needed</h4>
+      <p>
+        <code>region</code> was explicitly <strong>excluded from the feature set</strong>.<br><br>
+        Reason: Region is high-cardinality metadata used only for visualization
+        (e.g., regional bar chart). Encoding it would introduce 10+ dummy variables
+        that act as indirect proxies for GDP/health — adding noise, not signal.
+        <code>country</code> and <code>year</code> are identifiers, not features.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h4><span style="color:var(--accent3)">◎</span> Normalization / Scaling — Not Applied</h4>
+      <p>
+        All 8 features are <strong>already on comparable WHR index scales</strong>
+        (range ≈ 0–2, float64). Linear Regression does not require feature normalization
+        when scales are similar — no regularization (Ridge/Lasso) is used, so there is
+        no coefficient shrinkage bias from unscaled inputs.
+        Random Forest is inherently scale-invariant.
+        Scaling was evaluated and found unnecessary.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ═══ STEP 4 — MODEL TRAINING ═══ -->
+  <div class="section-title" style="margin-top:8px">Step 4 — Train Regression Model · Comparison &amp; Selection</div>
+
+  <!-- Model comparison table -->
+  <div class="chart-card">
+    <h3>Model Comparison — 3 Candidates Evaluated on 30% Test Set (n=235)</h3>
+    <p class="chart-desc">All models trained on the same 70/30 split (random_state=42). Best metric per column highlighted. <strong>Linear Regression was selected</strong> despite not having the best metrics — see justification below.</p>
+    <table class="model-table">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>MAE ↓ lower is better</th>
+          <th>RMSE ↓ lower is better</th>
+          <th>R² ↑ higher is better</th>
+          <th>Train rows</th>
+          <th>Decision</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Random Forest Regressor<br><span style="font-size:0.68rem;color:var(--text-muted)">n_estimators=100, random_state=42</span></td>
+          <td><span class="m-score m-best">0.4045</span></td>
+          <td><span class="m-score m-best">0.5185</span></td>
+          <td><span class="m-score m-best">0.7847</span></td>
+          <td style="color:var(--text-muted)">547</td>
+          <td><span class="skipped-badge">Not chosen</span></td>
+        </tr>
+        <tr class="model-chosen">
+          <td class="model-chosen-name">Linear Regression<br><span style="font-size:0.68rem;color:var(--text-muted);font-weight:400">sklearn defaults · no regularization</span></td>
+          <td><span class="m-score m-mid">0.4486</span></td>
+          <td><span class="m-score m-mid">0.5843</span></td>
+          <td><span class="m-score m-mid">0.7266</span></td>
+          <td style="color:var(--text-muted)">547</td>
+          <td><span class="chosen-badge">✓ Selected</span></td>
+        </tr>
+        <tr>
+          <td>Decision Tree Regressor<br><span style="font-size:0.68rem;color:var(--text-muted)">max_depth=5, random_state=42</span></td>
+          <td><span class="m-score m-low">0.5050</span></td>
+          <td><span class="m-score m-low">0.6543</span></td>
+          <td><span class="m-score m-low">0.6571</span></td>
+          <td style="color:var(--text-muted)">547</td>
+          <td><span class="skipped-badge">Not chosen</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Selection justification + artifacts -->
+  <div class="chart-grid">
+
+    <div class="model-sel-card">
+      <h4>Why Linear Regression was chosen over Random Forest</h4>
+      <p>
+        Random Forest achieves better metrics (R²=0.785 vs 0.727, MAE=0.405 vs 0.449),
+        but <strong>the workshop objective is pipeline integration, not model optimization</strong>
+        (per rubric: "Use a simple regression model").<br><br>
+        <strong>Additional technical justifications:</strong><br>
+        • <strong>Kafka consumer inference</strong> — Linear Regression produces a single
+        deterministic <code>predict()</code> call; no ensemble aggregation, lower latency per event.<br>
+        • <strong>Interpretability</strong> — coefficients directly show each feature's
+        contribution to the happiness score prediction — easier to validate in a demo.<br>
+        • <strong>Serialization</strong> — the <code>model.pkl</code> is ~1KB vs ~5MB for
+        Random Forest, making it trivial to load on each Kafka consumer message.<br>
+        • <strong>Sufficient accuracy</strong> — R²=0.727 explains 72.7% of variance, well
+        above the threshold for a meaningful prediction pipeline.
+      </p>
+    </div>
+
+    <div class="chart-card">
+      <h3>Training Summary &amp; Saved Artifacts</h3>
+      <p class="chart-desc">70/30 stratified split · random_state=42 · no cross-validation (per workshop scope)</p>
+      <ul class="artifact-list">
+        <li><span style="color:var(--accent2)">⬤</span> <strong>Train set:</strong> <code>547 rows</code> (70%)</li>
+        <li><span style="color:var(--accent3)">⬤</span> <strong>Test set:</strong> <code>235 rows</code> (30%)</li>
+        <li><span style="color:var(--green)">⬤</span> <strong>Features used:</strong> <code>8</code> (6 base + 2 engineered)</li>
+        <li><span style="color:var(--accent2)">⬤</span> <strong>Saved model:</strong> <code>models/model.pkl</code></li>
+        <li><span style="color:var(--accent2)">⬤</span> <strong>Feature metadata:</strong> <code>models/feature_meta.pkl</code></li>
+        <li><span style="color:var(--text-muted)">⬤</span> <strong>Metrics (test set):</strong> MAE=0.449 · RMSE=0.584 · R²=0.727</li>
+        <li><span style="color:var(--text-muted)">⬤</span> <strong>Metrics (full stream):</strong> MAE=0.426 · RMSE=0.547 · R²=0.764</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Evaluation visualizations + metric cards -->
+  <div class="chart-grid wide">
+
+    <div class="chart-card">
+      <h3>Evaluation Visualizations — Predicted vs Actual &amp; Residuals Distribution</h3>
+      <p class="chart-desc">
+        <strong>Left:</strong> scatter of actual vs predicted scores on the 30% test set (n=235). Points near the red diagonal = perfect prediction.
+        <strong>Right:</strong> residuals distribution — centered at 0 confirms no systematic over/under-prediction bias.
+      </p>
+      <img src="data/processed/model_evaluation.png" class="eda-img" alt="Predicted vs Actual and Residuals Distribution" />
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+
+      <!-- Test-set metric cards -->
+      <div class="chart-card" style="flex:0">
+        <h3>Evaluation Metrics — Test Set (n=235 · 30% holdout)</h3>
+        <p class="chart-desc">Official held-out evaluation. The model never saw these rows during training.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px">
+          <div class="kpi-card accent1" style="padding:14px">
+            <div class="kpi-label">MAE</div>
+            <div class="kpi-value" style="font-size:1.5rem">0.449</div>
+            <div class="kpi-sub">Mean absolute error</div>
+          </div>
+          <div class="kpi-card accent3" style="padding:14px">
+            <div class="kpi-label">RMSE</div>
+            <div class="kpi-value" style="font-size:1.5rem">0.584</div>
+            <div class="kpi-sub">Root mean sq. error</div>
+          </div>
+          <div class="kpi-card accent2" style="padding:14px">
+            <div class="kpi-label">R²</div>
+            <div class="kpi-value" style="font-size:1.5rem">0.727</div>
+            <div class="kpi-sub">72.7% variance explained</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Note: test-set vs streaming metrics -->
+      <div class="chart-card" style="flex:1;border-color:rgba(247,183,49,0.3);background:rgba(247,183,49,0.04)">
+        <h3 style="color:var(--accent3)">⚠ Test-Set vs Streaming Metrics</h3>
+        <p class="chart-desc" style="margin-bottom:10px">The dashboard KPI cards show slightly better numbers than the test-set evaluation above. Here is why:</p>
+        <table style="width:100%;border-collapse:collapse;font-size:0.77rem">
+          <thead>
+            <tr>
+              <th style="background:var(--surface2);padding:7px 10px;text-align:left;font-size:0.68rem;text-transform:uppercase;color:var(--text-muted)">Context</th>
+              <th style="background:var(--surface2);padding:7px 10px;text-align:left;font-size:0.68rem;text-transform:uppercase;color:var(--text-muted)">Rows</th>
+              <th style="background:var(--surface2);padding:7px 10px;text-align:left;font-size:0.68rem;text-transform:uppercase;color:var(--text-muted)">MAE</th>
+              <th style="background:var(--surface2);padding:7px 10px;text-align:left;font-size:0.68rem;text-transform:uppercase;color:var(--text-muted)">R²</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:7px 10px;border-bottom:1px solid var(--border)"><strong>Held-out test set</strong> ✓ proper</td>
+              <td style="padding:7px 10px;border-bottom:1px solid var(--border);color:var(--text-muted)">235 (30%)</td>
+              <td style="padding:7px 10px;border-bottom:1px solid var(--border);color:var(--accent3);font-family:'JetBrains Mono',monospace">0.449</td>
+              <td style="padding:7px 10px;border-bottom:1px solid var(--border);color:var(--accent3);font-family:'JetBrains Mono',monospace">0.727</td>
+            </tr>
+            <tr>
+              <td style="padding:7px 10px"><strong>Full Kafka stream</strong> (train+test)</td>
+              <td style="padding:7px 10px;color:var(--text-muted)">782 (100%)</td>
+              <td style="padding:7px 10px;color:var(--accent2);font-family:'JetBrains Mono',monospace">0.426</td>
+              <td style="padding:7px 10px;color:var(--accent2);font-family:'JetBrains Mono',monospace">0.764</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:0.72rem;color:var(--text-muted);margin-top:10px">
+          The streaming pipeline sends <strong>all 782 rows</strong> through Kafka (including the 547 training rows).
+          The model predicts more accurately on rows it was trained on — hence the better KPI numbers.
+          The <strong>test-set metrics (0.449 / 0.727) are the honest evaluation</strong>.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 <!-- ═══════════════════ END EDA ═══════════════════ -->
 
 <div class="main">
 
-  <div class="section-title" style="margin-top:8px">Part B — Streaming ETL Dashboard · KPIs &amp; Predictions</div>
+  <div class="section-title" style="margin-top:8px">Part B — Streaming ETL with Apache Kafka</div>
 
-  <!-- KPI CARDS -->
-  <div class="section-title">KPI 1 — Model Performance Overview</div>
+  <!-- ── STEPS 5 & 6: PRODUCER + CONSUMER OVERVIEW ── -->
+  <div class="chart-grid" style="grid-template-columns:1fr 1fr 1fr">
+
+    <!-- Kafka Setup -->
+    <div class="chart-card">
+      <h3>Kafka Setup — docker-compose</h3>
+      <p class="chart-desc">All three services launched with a single <code>docker-compose up</code></p>
+      <ul class="artifact-list" style="margin-top:8px">
+        <li><span style="color:var(--accent2)">⬤</span> <strong>Zookeeper</strong> &nbsp;<code>confluentinc/cp-zookeeper:7.5.0</code> · port 2181</li>
+        <li><span style="color:var(--accent2)">⬤</span> <strong>Kafka broker</strong> &nbsp;<code>confluentinc/cp-kafka:7.5.0</code> · port 9092</li>
+        <li><span style="color:var(--accent2)">⬤</span> <strong>PostgreSQL 15</strong> &nbsp;<code>happiness_db</code> · port 5432</li>
+        <li><span style="color:var(--green)">⬤</span> <strong>Topic</strong> &nbsp;<code>happiness-predictions</code></li>
+        <li><span style="color:var(--green)">⬤</span> <strong>Auto-init</strong> &nbsp;<code>create_tables.sql</code> via <code>initdb.d</code></li>
+        <li><span style="color:var(--text-muted)">⬤</span> <strong>Credentials</strong> &nbsp;<code>etl_user / etl_pass</code></li>
+      </ul>
+    </div>
+
+    <!-- Step 5: Producer -->
+    <div class="chart-card">
+      <h3>Step 5 — Kafka Producer</h3>
+      <p class="chart-desc"><code>kafka/producer.py</code> · streams 782 events one by one</p>
+      <ul class="artifact-list" style="margin-top:8px">
+        <li><span class="dec-badge db-ok" style="font-size:0.65rem">✓</span> Reads <code>happiness_unified.csv</code> row by row</li>
+        <li><span class="dec-badge db-ok" style="font-size:0.65rem">✓</span> Serializes each event as JSON (<code>json.dumps</code>)</li>
+        <li><span class="dec-badge db-ok" style="font-size:0.65rem">✓</span> Sends to topic <code>happiness-predictions</code></li>
+        <li><span class="dec-badge db-ok" style="font-size:0.65rem">✓</span> Keyed by <code>country_year</code> for partitioning</li>
+        <li><span class="dec-badge db-ok" style="font-size:0.65rem">✓</span> Configurable <code>--delay</code> and <code>--limit</code> args</li>
+        <li><span class="dec-badge db-ok" style="font-size:0.65rem">✓</span> Handles <code>NoBrokersAvailable</code> gracefully</li>
+      </ul>
+      <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:0.67rem;color:var(--accent2);line-height:1.7">
+        { "country": "Colombia", "year": 2019,<br>
+        &nbsp;&nbsp;"gdp": 1.2, "family": 0.8, "health": 0.9,<br>
+        &nbsp;&nbsp;"freedom": 0.6, "generosity": 0.3,<br>
+        &nbsp;&nbsp;"corruption": 0.1,<br>
+        &nbsp;&nbsp;"actual_happiness_score": 6.2 }
+      </div>
+    </div>
+
+    <!-- Step 6: Consumer -->
+    <div class="chart-card">
+      <h3>Step 6 — Kafka Consumer</h3>
+      <p class="chart-desc"><code>kafka/consumer.py</code> · 7-step processing per message</p>
+      <ul class="artifact-list" style="margin-top:8px">
+        <li><span style="color:var(--accent3);font-weight:700;font-size:0.75rem">1</span> Receive message from Kafka topic</li>
+        <li><span style="color:var(--accent3);font-weight:700;font-size:0.75rem">2</span> Validate schema → determine status</li>
+        <li><span style="color:var(--accent3);font-weight:700;font-size:0.75rem">3</span> <strong>Store raw payload + status</strong> → <code>raw_happiness_events</code> + <code>COMMIT</code></li>
+        <li><span style="color:var(--accent3);font-weight:700;font-size:0.75rem">4</span> Skip invalid events (<code>continue</code>) — pipeline never crashes</li>
+        <li><span style="color:var(--accent3);font-weight:700;font-size:0.75rem">5</span> Recompute engineered features in correct order</li>
+        <li><span style="color:var(--accent3);font-weight:700;font-size:0.75rem">6</span> <code>model.predict(X)</code> → predicted happiness score</li>
+        <li><span style="color:var(--accent3);font-weight:700;font-size:0.75rem">7</span> Store result → <code>fact_predictions</code> + <code>COMMIT</code></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- ── VALIDATION + DB SCHEMA ── -->
+  <div class="chart-grid">
+
+    <!-- Validation Logic -->
+    <div class="chart-card">
+      <h3>Event Validation Logic — 4 Status Codes</h3>
+      <p class="chart-desc">Every event is validated before prediction. Invalid events are stored in the raw table with the appropriate status and then skipped — they never crash the pipeline.</p>
+      <table class="dec-table" style="margin-top:8px">
+        <thead>
+          <tr><th>Status</th><th>Trigger Condition</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="dec-badge db-ok">VALID</span></td>
+            <td style="font-size:0.77rem;color:var(--text-muted)">All required fields present, all numeric values are valid floats (not NaN/Inf)</td>
+            <td style="font-size:0.77rem">Stored + prediction generated</td>
+          </tr>
+          <tr>
+            <td><span class="dec-badge db-warn">INVALID_SCHEMA</span></td>
+            <td style="font-size:0.77rem;color:var(--text-muted)">One or more of <code>REQUIRED_FIELDS</code> missing from the JSON event</td>
+            <td style="font-size:0.77rem">Stored · skipped from prediction</td>
+          </tr>
+          <tr>
+            <td><span class="dec-badge db-warn">INVALID_VALUES</span></td>
+            <td style="font-size:0.77rem;color:var(--text-muted)">Numeric field cannot be cast to <code>float</code>, or value is <code>NaN</code> / <code>Inf</code></td>
+            <td style="font-size:0.77rem">Stored · skipped from prediction</td>
+          </tr>
+          <tr>
+            <td><span class="dec-badge db-drop">PREDICTION_ERROR</span></td>
+            <td style="font-size:0.77rem;color:var(--text-muted)">Unhandled exception during feature engineering or <code>model.predict()</code></td>
+            <td style="font-size:0.77rem">Status updated via <code>UPDATE</code> · pipeline continues</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;background:var(--surface2);border-radius:8px;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-muted);line-height:1.8">
+        <span style="color:var(--text-muted)">REQUIRED_FIELDS =</span> <span style="color:var(--accent2)">{country, year, gdp,<br>&nbsp;family, health, freedom, generosity, corruption}</span><br>
+        <span style="color:var(--text-muted)">NUMERIC_FIELDS =</span> <span style="color:var(--accent2)">{gdp, family, health, freedom,<br>&nbsp;generosity, corruption, year}</span>
+      </div>
+    </div>
+
+    <!-- DB Schema -->
+    <div class="chart-card">
+      <h3>Database Schema — PostgreSQL Tables</h3>
+      <p class="chart-desc">4 tables created at startup via <code>create_tables.sql</code> mounted in <code>docker-entrypoint-initdb.d</code></p>
+      <table class="dec-table" style="margin-top:8px">
+        <thead>
+          <tr><th>Table</th><th>Key Columns</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace;color:var(--red);font-size:0.75rem">raw_happiness_events</td>
+            <td style="font-size:0.72rem;color:var(--text-muted)"><code>raw_payload JSONB</code><br><code>processing_status</code> CHECK<br><code>received_at TIMESTAMP</code></td>
+            <td style="font-size:0.76rem">Stores <strong>every</strong> event exactly as received, before any processing. Supports auditing &amp; reprocessing.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:0.75rem">dim_raw_event</td>
+            <td style="font-size:0.72rem;color:var(--text-muted)"><code>raw_event_id FK</code><br>all 8 numeric fields parsed</td>
+            <td style="font-size:0.76rem">Structured parsed view of valid raw events for dimensional queries.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace;color:var(--accent2);font-size:0.75rem">fact_predictions</td>
+            <td style="font-size:0.72rem;color:var(--text-muted)"><code>actual_score</code><br><code>predicted_score</code><br><code>prediction_error</code></td>
+            <td style="font-size:0.76rem">Prediction results linked to <code>dim_country</code>, <code>dim_date</code>, and <code>raw_happiness_events</code>.</td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace;color:var(--accent3);font-size:0.75rem">dim_country / dim_date</td>
+            <td style="font-size:0.72rem;color:var(--text-muted)">Auto-created via <code>get_or_create_*()</code></td>
+            <td style="font-size:0.76rem">Surrogate keys for countries and years. Created on first occurrence.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ── PART C — STEP 7: DATABASE DESIGN ── -->
+  <div class="section-title" style="margin-top:24px">Part C — Step 7 · Database Design · Star Schema</div>
+
+  <div class="chart-card" style="margin-bottom:16px">
+    <h3>Dimensional Model — PostgreSQL Star Schema</h3>
+    <p class="chart-desc">
+      <code>fact_predictions</code> sits at the center of the star, holding all ML prediction results with three foreign keys pointing to dimension tables.
+      <code>raw_happiness_events</code> stores every Kafka event verbatim <em>before</em> any processing, guaranteeing full auditability.
+    </p>
+
+    <!-- Legend -->
+    <div class="db-legend">
+      <span class="db-legend-item"><span class="db-pill pk" style="display:inline-block">PK</span> Primary Key</span>
+      <span class="db-legend-item"><span class="db-pill fk" style="display:inline-block">FK</span> Foreign Key</span>
+      <span class="db-legend-item"><span class="db-pill measure" style="display:inline-block">M</span> Measure / Metric</span>
+      <span class="db-legend-item"><span class="db-pill attr" style="display:inline-block">A</span> Attribute</span>
+      <span class="db-legend-item"><span class="db-type-badge raw" style="display:inline-block">RAW</span> Audit / Raw table</span>
+    </div>
+
+    <!-- Star Canvas -->
+    <div class="db-star-canvas">
+
+      <!-- LEFT: raw + dim_raw_event -->
+      <div class="db-col-side">
+
+        <div class="db-card db-raw">
+          <div class="db-card-title">
+            <span class="db-type-badge raw">RAW</span> raw_happiness_events
+          </div>
+          <div class="db-pills">
+            <span class="db-pill pk">raw_event_id &nbsp;SERIAL PK</span>
+            <span class="db-pill attr">received_at &nbsp;TIMESTAMP</span>
+            <span class="db-pill attr">raw_payload &nbsp;JSONB</span>
+            <span class="db-pill attr">processing_status &nbsp;VARCHAR</span>
+          </div>
+          <div class="db-check">CHECK: VALID | INVALID_SCHEMA | INVALID_VALUES | PREDICTION_ERROR</div>
+        </div>
+
+        <div class="db-arrow-v">↓ <span style="font-size:0.62rem;color:var(--text-muted)">1 : 1</span></div>
+
+        <div class="db-card db-dim">
+          <div class="db-card-title">
+            <span class="db-type-badge dim">DIM</span> dim_raw_event
+          </div>
+          <div class="db-pills">
+            <span class="db-pill fk">raw_event_id &nbsp;FK → raw_happiness_events</span>
+            <span class="db-pill attr">country &nbsp;TEXT</span>
+            <span class="db-pill attr">year &nbsp;INT</span>
+            <span class="db-pill attr">gdp &nbsp;NUMERIC</span>
+            <span class="db-pill attr">family &nbsp;NUMERIC</span>
+            <span class="db-pill attr">health &nbsp;NUMERIC</span>
+            <span class="db-pill attr">freedom &nbsp;NUMERIC</span>
+            <span class="db-pill attr">generosity &nbsp;NUMERIC</span>
+            <span class="db-pill attr">corruption &nbsp;NUMERIC</span>
+          </div>
+        </div>
+
+        <div class="db-rel-label" style="text-align:right;margin-top:8px">raw_event_id ──────→</div>
+
+      </div>
+
+      <!-- CENTER: fact_predictions -->
+      <div class="db-col-center">
+        <div class="db-rel-label" style="text-align:center;margin-bottom:6px">↑ country_id</div>
+        <div class="db-card db-fact">
+          <div class="db-card-title" style="justify-content:center">
+            <span class="db-type-badge fact">FACT</span> fact_predictions
+          </div>
+          <div class="db-pills">
+            <span class="db-pill pk">prediction_id &nbsp;SERIAL PK</span>
+            <span class="db-pill fk">raw_event_id &nbsp;FK → raw_happiness_events</span>
+            <span class="db-pill fk">country_id &nbsp;FK → dim_country</span>
+            <span class="db-pill fk">date_id &nbsp;FK → dim_date</span>
+            <span class="db-pill measure">actual_score &nbsp;NUMERIC(6,4)</span>
+            <span class="db-pill measure">predicted_score &nbsp;NUMERIC(6,4)</span>
+            <span class="db-pill measure">prediction_error &nbsp;NUMERIC(6,4)</span>
+            <span class="db-pill attr">prediction_timestamp &nbsp;TIMESTAMP</span>
+          </div>
+        </div>
+        <div class="db-rel-label" style="text-align:center;margin-top:6px">↓ date_id</div>
+      </div>
+
+      <!-- RIGHT: dim_country + dim_date -->
+      <div class="db-col-side">
+
+        <div class="db-rel-label" style="margin-bottom:6px">←────── country_id</div>
+
+        <div class="db-card db-dim">
+          <div class="db-card-title">
+            <span class="db-type-badge dim">DIM</span> dim_country
+          </div>
+          <div class="db-pills">
+            <span class="db-pill pk">country_id &nbsp;SERIAL PK</span>
+            <span class="db-pill attr">country_name &nbsp;TEXT UNIQUE</span>
+            <span class="db-pill attr">region &nbsp;TEXT</span>
+          </div>
+          <div class="db-check">Auto-created on first occurrence via get_or_create_country()</div>
+        </div>
+
+        <div style="height:32px"></div>
+
+        <div class="db-rel-label" style="margin-bottom:6px">←────── date_id</div>
+
+        <div class="db-card db-dim">
+          <div class="db-card-title">
+            <span class="db-type-badge dim">DIM</span> dim_date
+          </div>
+          <div class="db-pills">
+            <span class="db-pill pk">date_id &nbsp;SERIAL PK</span>
+            <span class="db-pill attr">year &nbsp;INT UNIQUE</span>
+          </div>
+          <div class="db-check">Auto-created on first occurrence via get_or_create_date()</div>
+        </div>
+
+      </div>
+
+    </div><!-- end db-star-canvas -->
+
+    <!-- Relationship summary -->
+    <div style="margin-top:20px;background:var(--surface2);border-radius:8px;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:0.68rem;line-height:2;border:1px solid var(--border)">
+      <div style="color:var(--text-muted);margin-bottom:4px;font-size:0.65rem;letter-spacing:0.5px">FOREIGN KEY RELATIONSHIPS</div>
+      <div><span style="color:#38bdf8">fact_predictions.raw_event_id</span> <span style="color:var(--text-muted)">→</span> <span style="color:#fc5c65">raw_happiness_events.raw_event_id</span></div>
+      <div><span style="color:#38bdf8">fact_predictions.country_id</span> <span style="color:var(--text-muted)">→</span> <span style="color:#38bdf8">dim_country.country_id</span></div>
+      <div><span style="color:#38bdf8">fact_predictions.date_id</span> <span style="color:var(--text-muted)">→</span> <span style="color:#38bdf8">dim_date.date_id</span></div>
+      <div><span style="color:#38bdf8">dim_raw_event.raw_event_id</span> <span style="color:var(--text-muted)">→</span> <span style="color:#fc5c65">raw_happiness_events.raw_event_id</span></div>
+    </div>
+
+  </div><!-- end chart-card -->
+
+  <!-- ── STEP 8 — LOAD RAW EVENTS & PREDICTION RESULTS ── -->
+  <div class="section-title" style="margin-top:24px">Step 8 — Load Raw Events and Prediction Results</div>
+
+  <div class="chart-grid" style="grid-template-columns:1fr 1fr">
+
+    <!-- Storage requirements checklist -->
+    <div class="chart-card">
+      <h3>Raw Event Storage — raw_happiness_events</h3>
+      <p class="chart-desc">Every Kafka message is stored <strong>before</strong> any validation or prediction. The pipeline never loses an event.</p>
+      <table class="dec-table" style="margin-top:10px">
+        <thead><tr><th>Requirement</th><th>Implementation</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-size:0.77rem">Store original Kafka message</td>
+            <td style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-muted)">raw_payload JSONB<br>insert_raw_event() + COMMIT</td>
+            <td><span class="dec-badge db-ok">✓ DONE</span></td>
+          </tr>
+          <tr>
+            <td style="font-size:0.77rem">Store actual score</td>
+            <td style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-muted)">fact_predictions.actual_score<br>event["actual_happiness_score"]</td>
+            <td><span class="dec-badge db-ok">✓ DONE</span></td>
+          </tr>
+          <tr>
+            <td style="font-size:0.77rem">Store predicted score</td>
+            <td style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-muted)">fact_predictions.predicted_score<br>model.predict(X)[0]</td>
+            <td><span class="dec-badge db-ok">✓ DONE</span></td>
+          </tr>
+          <tr>
+            <td style="font-size:0.77rem">Store prediction error</td>
+            <td style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-muted)">fact_predictions.prediction_error<br>actual − predicted</td>
+            <td><span class="dec-badge db-ok">✓ DONE</span></td>
+          </tr>
+          <tr>
+            <td style="font-size:0.77rem">Store event timestamp</td>
+            <td style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-muted)">prediction_timestamp<br>TIMESTAMP DEFAULT NOW()</td>
+            <td><span class="dec-badge db-ok">✓ DONE</span></td>
+          </tr>
+          <tr>
+            <td style="font-size:0.77rem">Link prediction to raw event</td>
+            <td style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-muted)">fact_predictions.raw_event_id<br>FK → raw_happiness_events</td>
+            <td><span class="dec-badge db-ok">✓ DONE</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Consumer flow with commit points -->
+    <div class="chart-card">
+      <h3>Consumer Write Flow — Transaction Boundaries</h3>
+      <p class="chart-desc">Two separate transactions guarantee raw event durability even if prediction fails.</p>
+      <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:0.69rem;line-height:2;background:var(--surface2);border-radius:8px;padding:14px 16px">
+        <div><span style="color:var(--accent3);font-weight:700">TX 1</span> <span style="color:var(--text-muted)">─── validate event ───────────────────</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;INSERT INTO raw_happiness_events (payload, status)</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--green)">COMMIT</span> <span style="color:var(--text-muted)">← raw event persisted before prediction</span></div>
+        <div style="margin-top:4px"><span style="color:var(--accent3);font-weight:700">TX 2</span> <span style="color:var(--text-muted)">─── valid events only ────────────────</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;INSERT INTO dim_raw_event (parsed fields)</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;model.predict(X) → predicted_score</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;get_or_create_country / get_or_create_date</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;INSERT INTO fact_predictions (scores, raw_event_id)</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--green)">COMMIT</span></div>
+        <div style="margin-top:4px"><span style="color:var(--red);font-weight:700">ERR</span> <span style="color:var(--text-muted)">─── on exception ─────────────────────</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;ROLLBACK → UPDATE status = PREDICTION_ERROR</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--accent)">pipeline continues</span> (no crash)</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── STEP 9 — DASHBOARD AND KPIs ── -->
+  <div class="section-title" style="margin-top:24px">Step 9 — Dashboard and KPIs · Connected to PostgreSQL</div>
+
+  <div class="chart-card" style="margin-bottom:16px">
+    <h3>Dashboard Architecture — FastAPI → PostgreSQL (NOT CSV files)</h3>
+    <p class="chart-desc">The dashboard is served by <code>api.py</code> (FastAPI), which exposes four JSON endpoints. Every endpoint executes a SQL query against <code>fact_predictions</code> and dimension tables in <strong>live PostgreSQL</strong>. No CSV files are read at dashboard time.</p>
+
+    <div class="chart-grid" style="grid-template-columns:repeat(4,1fr);margin-top:16px;gap:14px">
+
+      <div style="background:var(--surface2);border:1px solid rgba(0,201,167,0.35);border-radius:10px;padding:14px">
+        <div style="font-size:0.65rem;color:var(--accent3);font-weight:700;letter-spacing:0.5px;margin-bottom:6px">KPI 1 · REQUIRED</div>
+        <div style="font-weight:700;font-size:0.78rem;color:var(--text);margin-bottom:6px">Average Prediction Error</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.63rem;color:var(--text-muted);line-height:1.7">
+          GET /api/kpi1<br>
+          AVG(ABS(prediction_error))<br>
+          AVG(prediction_error)<br>
+          SQRT(AVG(error²)) — RMSE<br>
+          COUNT(*) — total predictions<br>
+          <span style="color:var(--green)">Source: fact_predictions</span>
+        </div>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid rgba(56,189,248,0.35);border-radius:10px;padding:14px">
+        <div style="font-size:0.65rem;color:var(--accent3);font-weight:700;letter-spacing:0.5px;margin-bottom:6px">KPI 2 · REQUIRED</div>
+        <div style="font-weight:700;font-size:0.78rem;color:var(--text);margin-bottom:6px">Predictions by Country</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.63rem;color:var(--text-muted);line-height:1.7">
+          GET /api/kpi2<br>
+          GROUP BY dim_country<br>
+          AVG(actual_score)<br>
+          AVG(predicted_score)<br>
+          AVG(ABS(prediction_error))<br>
+          <span style="color:var(--green)">JOIN fact_predictions + dim_country</span>
+        </div>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid rgba(108,99,255,0.35);border-radius:10px;padding:14px">
+        <div style="font-size:0.65rem;color:var(--accent3);font-weight:700;letter-spacing:0.5px;margin-bottom:6px">KPI 3 · REQUIRED</div>
+        <div style="font-weight:700;font-size:0.78rem;color:var(--text);margin-bottom:6px">Predicted vs Actual Score</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.63rem;color:var(--text-muted);line-height:1.7">
+          GET /api/kpi3<br>
+          Per-event scatter data<br>
+          actual_score vs predicted_score<br>
+          country + year metadata<br>
+          ORDER BY prediction_timestamp<br>
+          <span style="color:var(--green)">JOIN fact + dim_country + dim_date</span>
+        </div>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid rgba(247,183,49,0.35);border-radius:10px;padding:14px">
+        <div style="font-size:0.65rem;color:var(--accent3);font-weight:700;letter-spacing:0.5px;margin-bottom:6px">KPI 4 · REQUIRED</div>
+        <div style="font-weight:700;font-size:0.78rem;color:var(--text);margin-bottom:6px">Prediction Trends Over Time</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.63rem;color:var(--text-muted);line-height:1.7">
+          GET /api/kpi4<br>
+          GROUP BY dim_date.year<br>
+          AVG(actual_score) per year<br>
+          AVG(predicted_score) per year<br>
+          AVG(ABS(error)) trend<br>
+          <span style="color:var(--green)">JOIN fact_predictions + dim_date</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- How to run -->
+    <div style="margin-top:18px;background:var(--surface2);border-radius:8px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:0.7rem;border:1px solid var(--border)">
+      <div style="color:var(--text-muted);font-size:0.63rem;letter-spacing:0.5px;margin-bottom:8px">HOW TO RUN — LIVE DASHBOARD</div>
+      <div><span style="color:var(--accent3)"># 1. Start Kafka + PostgreSQL</span></div>
+      <div style="color:var(--text)">docker-compose up -d</div>
+      <div style="margin-top:6px"><span style="color:var(--accent3)"># 2. Stream events into Kafka</span></div>
+      <div style="color:var(--text)">cd kafka &amp;&amp; python producer.py</div>
+      <div style="margin-top:6px"><span style="color:var(--accent3)"># 3. Run consumer (writes to PostgreSQL)</span></div>
+      <div style="color:var(--text)">python consumer.py</div>
+      <div style="margin-top:6px"><span style="color:var(--accent3)"># 4. Serve dashboard (queries PostgreSQL via FastAPI)</span></div>
+      <div style="color:var(--text)">uvicorn api:app --reload &amp;&amp; open http://localhost:8000</div>
+      <div style="margin-top:10px;color:var(--accent2);font-size:0.65rem">✓ Dashboard auto-detects live mode — badge switches from "Offline snapshot" to "Live — PostgreSQL"</div>
+    </div>
+
+  </div>
+
+  <!-- ── KPI TAB NAVIGATION ── -->
+  <div class="kpi-nav">
+    <button class="kpi-tab-btn active" data-tab="kpi1">
+      <span class="tab-num">KPI 1</span>
+      <span class="tab-name">Model Performance</span>
+    </button>
+    <button class="kpi-tab-btn" data-tab="kpi2">
+      <span class="tab-num">KPI 2</span>
+      <span class="tab-name">By Country</span>
+    </button>
+    <button class="kpi-tab-btn" data-tab="kpi3">
+      <span class="tab-num">KPI 3</span>
+      <span class="tab-name">Predicted vs Actual</span>
+    </button>
+    <button class="kpi-tab-btn" data-tab="kpi4">
+      <span class="tab-num">KPI 4</span>
+      <span class="tab-name">Trends Over Time</span>
+    </button>
+    <button class="kpi-tab-btn" data-tab="bonus">
+      <span class="tab-num">+</span>
+      <span class="tab-name">Bonus: Regions</span>
+    </button>
+  </div>
+
+  <!-- ── KPI 1 PANEL ── -->
+  <div class="kpi-panel active" id="panel-kpi1">
+    <div class="kpi-panel-header">
+      <span class="kpi-panel-badge">KPI 1</span>
+      <div>
+        <div class="kpi-panel-title">Model Performance Overview</div>
+        <div class="kpi-panel-desc">Aggregate error metrics computed from all predictions stored in <code>fact_predictions</code></div>
+      </div>
+    </div>
   <div class="kpi-grid">
     <div class="kpi-card accent1">
       <div class="kpi-label">Avg Absolute Error</div>
@@ -787,8 +1845,17 @@
     </div>
   </div>
 
-  <!-- KPI 2 & STATUS -->
-  <div class="section-title">KPI 2 — Predictions by Country</div>
+  </div><!-- /panel-kpi1 -->
+
+  <!-- ── KPI 2 PANEL ── -->
+  <div class="kpi-panel" id="panel-kpi2">
+    <div class="kpi-panel-header">
+      <span class="kpi-panel-badge b2">KPI 2</span>
+      <div>
+        <div class="kpi-panel-title">Predictions by Country</div>
+        <div class="kpi-panel-desc">Average actual vs predicted happiness score per country, sourced from <code>fact_predictions JOIN dim_country</code></div>
+      </div>
+    </div>
   <div class="chart-grid wide">
     <div class="chart-card">
       <h3>Top 20 Countries — Actual vs Predicted Happiness</h3>
@@ -803,8 +1870,17 @@
     </div>
   </div>
 
-  <!-- KPI 3 — SCATTER -->
-  <div class="section-title">KPI 3 — Predicted vs Actual Score</div>
+  </div><!-- /panel-kpi2 -->
+
+  <!-- ── KPI 3 PANEL ── -->
+  <div class="kpi-panel" id="panel-kpi3">
+    <div class="kpi-panel-header">
+      <span class="kpi-panel-badge b3">KPI 3</span>
+      <div>
+        <div class="kpi-panel-title">Predicted vs Actual Score</div>
+        <div class="kpi-panel-desc">Per-event scatter plot — each point is one country-year prediction from <code>fact_predictions</code>. Points on the diagonal = perfect prediction.</div>
+      </div>
+    </div>
   <div class="chart-grid wide">
     <div class="chart-card">
       <h3>Actual vs Predicted Happiness Score</h3>
@@ -824,8 +1900,17 @@
     </div>
   </div>
 
-  <!-- KPI 4 — TRENDS -->
-  <div class="section-title">KPI 4 — Prediction Trends Over Time</div>
+  </div><!-- /panel-kpi3 -->
+
+  <!-- ── KPI 4 PANEL ── -->
+  <div class="kpi-panel" id="panel-kpi4">
+    <div class="kpi-panel-header">
+      <span class="kpi-panel-badge b4">KPI 4</span>
+      <div>
+        <div class="kpi-panel-title">Prediction Trends Over Time</div>
+        <div class="kpi-panel-desc">Year-by-year actual vs predicted scores and error trend, sourced from <code>fact_predictions JOIN dim_date</code></div>
+      </div>
+    </div>
   <div class="chart-grid">
     <div class="chart-card">
       <h3>Avg Actual vs Predicted Score by Year</h3>
@@ -839,8 +1924,17 @@
     </div>
   </div>
 
-  <!-- REGION -->
-  <div class="section-title">Bonus — Average Happiness by Region</div>
+  </div><!-- /panel-kpi4 -->
+
+  <!-- ── BONUS PANEL ── -->
+  <div class="kpi-panel" id="panel-bonus">
+    <div class="kpi-panel-header">
+      <span class="kpi-panel-badge bx">Bonus</span>
+      <div>
+        <div class="kpi-panel-title">Average Happiness by Region</div>
+        <div class="kpi-panel-desc">Regional aggregation from the 2015–2019 dataset (2015/2016 region labels)</div>
+      </div>
+    </div>
   <div class="chart-grid full">
     <div class="chart-card">
       <h3>Regional Happiness Overview</h3>
@@ -849,6 +1943,8 @@
     </div>
   </div>
 
+  </div><!-- /panel-bonus -->
+
 </div>
 
 <footer>
@@ -856,7 +1952,17 @@
 </footer>
 
 <script>
-// ── DATA ──────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────
+// LIVE vs OFFLINE MODE
+// When served via `uvicorn api:app`, the fetch() calls below hit the
+// real PostgreSQL database.  When opened as a plain HTML file (no
+// backend), every fetch fails and the dashboard falls back silently to
+// the embedded snapshot data so the page still renders correctly.
+// ─────────────────────────────────────────────────────────────────────
+const API_BASE = window.location.origin;   // e.g. http://localhost:8000
+let LIVE_MODE  = false;                    // flips to true if API responds
+
+// ── EMBEDDED FALLBACK DATA (snapshot from model run) ─────────────────
 const KPI1 = {"avg_abs_error":0.4262,"avg_signed_error":0.0,"total_predictions":782,"r2":0.764,"rmse":0.5474};
 
 const YEAR_DATA = [
@@ -927,289 +2033,313 @@ const baseTooltip = {
   bodyColor: '#7c82a0',
 };
 
+// ── STATUS INDICATOR ──────────────────────────────────────────────────
+function setLiveIndicator(live) {
+  const badge = document.querySelector('.badge');
+  if (!badge) return;
+  if (live) {
+    badge.innerHTML = '🟢 Live — PostgreSQL';
+    badge.style.borderColor = 'rgba(38,222,129,0.4)';
+    badge.style.color = '#26de81';
+  } else {
+    badge.innerHTML = '🟡 Offline snapshot';
+    badge.style.borderColor = 'rgba(247,183,49,0.4)';
+    badge.style.color = '#f7b731';
+  }
+}
+
+// ── KPI CARD UPDATE ───────────────────────────────────────────────────
+function updateKpiCards(k) {
+  const set = (sel, val) => { const el = document.querySelector(sel); if (el) el.textContent = val; };
+  set('.kpi-card.accent1 .kpi-value', k.avg_abs_error.toFixed(3));
+  set('.kpi-card.accent3 .kpi-value', k.rmse.toFixed(3));
+  set('.kpi-card.accent4 .kpi-value', k.total_predictions.toLocaleString());
+}
+
+// ── CHART INSTANCES (kept for live update) ────────────────────────────
+let chartCountry, chartStatus, chartScatter, chartYearLine, chartYearError, chartRegion;
+
 // ── CHART 1: Country Bar ──────────────────────────────────────────────
-new Chart(document.getElementById('chartCountry'), {
-  type: 'bar',
-  data: {
-    labels: TOP20.map(d => d.country),
-    datasets: [
-      {
-        label: 'Actual Score',
-        data: TOP20.map(d => d.actual),
-        backgroundColor: 'rgba(108,99,255,0.75)',
-        borderRadius: 4,
+function buildChartCountry(data) {
+  const top = data.slice(0, 20);
+  if (chartCountry) {
+    chartCountry.data.labels = top.map(d => d.country);
+    chartCountry.data.datasets[0].data = top.map(d => d.avg_actual ?? d.actual);
+    chartCountry.data.datasets[1].data = top.map(d => d.avg_predicted ?? d.predicted);
+    chartCountry.update();
+    return;
+  }
+  chartCountry = new Chart(document.getElementById('chartCountry'), {
+    type: 'bar',
+    data: {
+      labels: top.map(d => d.country),
+      datasets: [
+        { label: 'Actual Score',    data: top.map(d => d.avg_actual ?? d.actual),    backgroundColor: 'rgba(108,99,255,0.75)', borderRadius: 4 },
+        { label: 'Predicted Score', data: top.map(d => d.avg_predicted ?? d.predicted), backgroundColor: 'rgba(0,201,167,0.65)', borderRadius: 4 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top' }, tooltip: { ...baseTooltip } },
+      scales: {
+        x: { grid: { color: gridColor }, ticks: { maxRotation: 45 } },
+        y: { grid: { color: gridColor }, title: { display: true, text: 'Happiness Score' }, min: 5.5, max: 8.0 }
+      }
+    }
+  });
+}
+
+// ── CHART 2: Status Donut ─────────────────────────────────────────────
+function buildChartStatus(statusList) {
+  const colors = { VALID:'#26de81', INVALID_SCHEMA:'#f7b731', INVALID_VALUES:'#fc5c65', PREDICTION_ERROR:'#a55eea' };
+  const data = statusList.map(d => ({ ...d, color: colors[d.status] || '#7c82a0' }));
+  const total = data.reduce((s, d) => s + d.count, 0);
+
+  if (chartStatus) {
+    chartStatus.data.labels = data.map(d => d.status);
+    chartStatus.data.datasets[0].data = data.map(d => d.count);
+    chartStatus.data.datasets[0].backgroundColor = data.map(d => d.color);
+    chartStatus.update();
+  } else {
+    chartStatus = new Chart(document.getElementById('chartStatus'), {
+      type: 'doughnut',
+      data: {
+        labels: data.map(d => d.status),
+        datasets: [{ data: data.map(d => d.count), backgroundColor: data.map(d => d.color), borderColor: '#1a1d27', borderWidth: 3, hoverOffset: 6 }]
       },
-      {
-        label: 'Predicted Score',
-        data: TOP20.map(d => d.predicted),
-        backgroundColor: 'rgba(0,201,167,0.65)',
-        borderRadius: 4,
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '68%',
+        plugins: {
+          legend: { display: false },
+          tooltip: { ...baseTooltip, callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} (${(ctx.raw/total*100).toFixed(1)}%)` } }
+        }
       }
-    ]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { position: 'top' }, tooltip: { ...baseTooltip } },
-    scales: {
-      x: { grid: { color: gridColor }, ticks: { maxRotation: 45 } },
-      y: {
-        grid: { color: gridColor },
-        title: { display: true, text: 'Happiness Score' },
-        min: 5.5, max: 8.0,
-      }
-    }
+    });
   }
-});
 
-// ── CHART 2: Status Donut ────────────────────────────────────────────
-const total = STATUS_DATA.reduce((s, d) => s + d.count, 0);
-new Chart(document.getElementById('chartStatus'), {
-  type: 'doughnut',
-  data: {
-    labels: STATUS_DATA.map(d => d.status),
-    datasets: [{
-      data: STATUS_DATA.map(d => d.count),
-      backgroundColor: STATUS_DATA.map(d => d.color),
-      borderColor: '#1a1d27',
-      borderWidth: 3,
-      hoverOffset: 6,
-    }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false, cutout: '68%',
-    plugins: {
-      legend: { display: false },
-      tooltip: { ...baseTooltip, callbacks: {
-        label: ctx => ` ${ctx.label}: ${ctx.raw} (${(ctx.raw/total*100).toFixed(1)}%)`
-      }}
-    }
-  }
-});
-
-// Status pills
-const pillsEl = document.getElementById('statusPills');
-STATUS_DATA.forEach(d => {
-  const pct = d.count / total * 100;
-  pillsEl.innerHTML += `
-    <div class="status-pill">
-      <div class="sp-label"><span class="sp-dot" style="background:${d.color}"></span>${d.status}</div>
-      <div class="sp-bar-wrap"><div class="sp-bar" style="width:${pct}%;background:${d.color}"></div></div>
-      <div class="sp-count" style="color:${d.color}">${d.count}</div>
-    </div>`;
-});
+  const pillsEl = document.getElementById('statusPills');
+  pillsEl.innerHTML = '';
+  data.forEach(d => {
+    const pct = d.count / total * 100;
+    pillsEl.innerHTML += `
+      <div class="status-pill">
+        <div class="sp-label"><span class="sp-dot" style="background:${d.color}"></span>${d.status}</div>
+        <div class="sp-bar-wrap"><div class="sp-bar" style="width:${pct}%;background:${d.color}"></div></div>
+        <div class="sp-count" style="color:${d.color}">${d.count}</div>
+      </div>`;
+  });
+}
 
 // ── CHART 3: Scatter ─────────────────────────────────────────────────
-const regionColors = {
-  "Western Europe":"rgba(108,99,255,0.7)",
-  "Latin America and Caribbean":"rgba(0,201,167,0.7)",
-  "North America":"rgba(247,183,49,0.7)",
-  "Australia and New Zealand":"rgba(252,92,101,0.7)",
-  "Eastern Asia":"rgba(38,222,129,0.7)",
-  "Middle East and Northern Africa":"rgba(253,150,68,0.7)",
-  "Central and Eastern Europe":"rgba(165,94,234,0.7)",
-  "Southeastern Asia":"rgba(75,207,250,0.7)",
-  "Southern Asia":"rgba(255,107,107,0.7)",
-  "Sub-Saharan Africa":"rgba(200,214,229,0.7)",
-  "Unknown":"rgba(100,110,130,0.5)",
-};
-
-// Build scatter data — sample evenly to keep chart fast
-const scatterSample = ALL_COUNTRIES.map(d => ({
-  x: d.actual, y: d.predicted,
-  country: d.country,
-  color: 'rgba(108,99,255,0.6)'
-}));
-
-// Perfect-fit diagonal
-const diagMin = 3.0, diagMax = 8.0;
-
-new Chart(document.getElementById('chartScatter'), {
-  type: 'scatter',
-  data: {
-    datasets: [
-      {
-        label: 'Predictions',
-        data: scatterSample.map(d => ({x: d.x, y: d.y, country: d.country})),
-        backgroundColor: 'rgba(108,99,255,0.55)',
-        pointRadius: 5,
-        pointHoverRadius: 7,
-      },
-      {
-        label: 'Perfect Fit',
-        data: [{x: diagMin, y: diagMin}, {x: diagMax, y: diagMax}],
-        type: 'line',
-        borderColor: 'rgba(252,92,101,0.8)',
-        borderWidth: 1.5,
-        borderDash: [6,4],
-        pointRadius: 0,
-        fill: false,
-      }
-    ]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'top' },
-      tooltip: {
-        ...baseTooltip,
-        callbacks: {
-          label: ctx => {
-            if (ctx.datasetIndex === 0) {
-              return ` ${ctx.raw.country || ''}: actual=${ctx.raw.x?.toFixed(3)}, predicted=${ctx.raw.y?.toFixed(3)}`;
-            }
-            return ` Perfect fit line`;
-          }
-        }
-      }
+function buildChartScatter(points) {
+  const diagMin = 3.0, diagMax = 8.0;
+  const pts = points.map(d => ({ x: d.avg_actual ?? d.actual, y: d.avg_predicted ?? d.predicted, country: d.country }));
+  if (chartScatter) {
+    chartScatter.data.datasets[0].data = pts;
+    chartScatter.update();
+    return;
+  }
+  chartScatter = new Chart(document.getElementById('chartScatter'), {
+    type: 'scatter',
+    data: {
+      datasets: [
+        { label: 'Predictions', data: pts, backgroundColor: 'rgba(108,99,255,0.55)', pointRadius: 5, pointHoverRadius: 7 },
+        { label: 'Perfect Fit', data: [{x:diagMin,y:diagMin},{x:diagMax,y:diagMax}], type:'line',
+          borderColor:'rgba(252,92,101,0.8)', borderWidth:1.5, borderDash:[6,4], pointRadius:0, fill:false }
+      ]
     },
-    scales: {
-      x: {
-        grid: { color: gridColor },
-        title: { display: true, text: 'Actual Happiness Score' },
-        min: 3, max: 8.2
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { ...baseTooltip, callbacks: { label: ctx => ctx.datasetIndex === 0
+          ? ` ${ctx.raw.country || ''}: actual=${ctx.raw.x?.toFixed(3)}, predicted=${ctx.raw.y?.toFixed(3)}`
+          : ' Perfect fit line' } }
       },
-      y: {
-        grid: { color: gridColor },
-        title: { display: true, text: 'Predicted Happiness Score' },
-        min: 3, max: 8.2
+      scales: {
+        x: { grid:{color:gridColor}, title:{display:true,text:'Actual Happiness Score'}, min:3, max:8.2 },
+        y: { grid:{color:gridColor}, title:{display:true,text:'Predicted Happiness Score'}, min:3, max:8.2 }
       }
     }
-  }
-});
+  });
+}
 
 // ── CHART 4a: Year Line ───────────────────────────────────────────────
-new Chart(document.getElementById('chartYearLine'), {
-  type: 'line',
-  data: {
-    labels: YEAR_DATA.map(d => d.year),
-    datasets: [
-      {
-        label: 'Avg Actual',
-        data: YEAR_DATA.map(d => d.avg_actual),
-        borderColor: '#6c63ff',
-        backgroundColor: 'rgba(108,99,255,0.12)',
-        fill: true,
-        tension: 0.35,
-        pointRadius: 5, pointHoverRadius: 7,
-      },
-      {
-        label: 'Avg Predicted',
-        data: YEAR_DATA.map(d => d.avg_predicted),
-        borderColor: '#00c9a7',
-        backgroundColor: 'rgba(0,201,167,0.08)',
-        fill: true,
-        tension: 0.35,
-        pointRadius: 5, pointHoverRadius: 7,
-        borderDash: [5, 3],
-      }
-    ]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { position: 'top' }, tooltip: { ...baseTooltip } },
-    scales: {
-      x: { grid: { color: gridColor } },
-      y: {
-        grid: { color: gridColor },
-        title: { display: true, text: 'Happiness Score' },
-        min: 4.8, max: 5.8
-      }
-    }
+function buildChartYearLine(yd) {
+  if (chartYearLine) {
+    chartYearLine.data.labels = yd.map(d => d.year);
+    chartYearLine.data.datasets[0].data = yd.map(d => d.avg_actual);
+    chartYearLine.data.datasets[1].data = yd.map(d => d.avg_predicted);
+    chartYearLine.update();
+    return;
   }
-});
+  chartYearLine = new Chart(document.getElementById('chartYearLine'), {
+    type: 'line',
+    data: {
+      labels: yd.map(d => d.year),
+      datasets: [
+        { label:'Avg Actual',    data:yd.map(d=>d.avg_actual),    borderColor:'#6c63ff', backgroundColor:'rgba(108,99,255,0.12)', fill:true, tension:0.35, pointRadius:5, pointHoverRadius:7 },
+        { label:'Avg Predicted', data:yd.map(d=>d.avg_predicted), borderColor:'#00c9a7', backgroundColor:'rgba(0,201,167,0.08)',  fill:true, tension:0.35, pointRadius:5, pointHoverRadius:7, borderDash:[5,3] },
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{position:'top'}, tooltip:{...baseTooltip} },
+      scales:{ x:{grid:{color:gridColor}}, y:{grid:{color:gridColor}, title:{display:true,text:'Happiness Score'}, min:4.8, max:5.8} }
+    }
+  });
+}
 
 // ── CHART 4b: Year Error ──────────────────────────────────────────────
-new Chart(document.getElementById('chartYearError'), {
-  type: 'bar',
-  data: {
-    labels: YEAR_DATA.map(d => d.year),
-    datasets: [{
-      label: 'Avg Absolute Error',
-      data: YEAR_DATA.map(d => d.avg_abs_error),
-      backgroundColor: YEAR_DATA.map(d =>
-        d.avg_abs_error < 0.40 ? 'rgba(38,222,129,0.75)' :
-        d.avg_abs_error < 0.45 ? 'rgba(247,183,49,0.75)' :
-        'rgba(252,92,101,0.75)'
-      ),
-      borderRadius: 6,
-    }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false }, tooltip: { ...baseTooltip } },
-    scales: {
-      x: { grid: { color: gridColor } },
-      y: {
-        grid: { color: gridColor },
-        title: { display: true, text: 'Abs Error' },
-        min: 0.35, max: 0.5,
-      }
-    }
+function buildChartYearError(yd) {
+  const barColors = yd.map(d =>
+    d.avg_abs_error < 0.40 ? 'rgba(38,222,129,0.75)' :
+    d.avg_abs_error < 0.45 ? 'rgba(247,183,49,0.75)' : 'rgba(252,92,101,0.75)'
+  );
+  if (chartYearError) {
+    chartYearError.data.labels = yd.map(d => d.year);
+    chartYearError.data.datasets[0].data = yd.map(d => d.avg_abs_error);
+    chartYearError.data.datasets[0].backgroundColor = barColors;
+    chartYearError.update();
+    return;
   }
-});
+  chartYearError = new Chart(document.getElementById('chartYearError'), {
+    type: 'bar',
+    data: {
+      labels: yd.map(d => d.year),
+      datasets: [{ label:'Avg Absolute Error', data:yd.map(d=>d.avg_abs_error), backgroundColor:barColors, borderRadius:6 }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{...baseTooltip} },
+      scales:{ x:{grid:{color:gridColor}}, y:{grid:{color:gridColor}, title:{display:true,text:'Abs Error'}, min:0.35, max:0.5} }
+    }
+  });
+}
 
 // ── CHART 5: Region ───────────────────────────────────────────────────
-const regionColors2 = [
-  '#6c63ff','#00c9a7','#f7b731','#fc5c65','#26de81',
-  '#fd9644','#a55eea','#4bcffa','#ff6b6b','#c8d6e5'
-];
-new Chart(document.getElementById('chartRegion'), {
-  type: 'bar',
-  data: {
-    labels: REGION_DATA.map(d => d.region),
-    datasets: [{
-      label: 'Avg Happiness Score',
-      data: REGION_DATA.map(d => d.avg),
-      backgroundColor: regionColors2,
-      borderRadius: 6,
-    }]
-  },
-  options: {
-    indexAxis: 'y',
-    responsive: true, maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        ...baseTooltip,
-        callbacks: {
-          label: ctx => {
-            const r = REGION_DATA[ctx.dataIndex];
-            return ` Score: ${r.avg} (n=${r.n} records)`;
-          }
-        }
-      }
-    },
-    scales: {
-      x: {
-        grid: { color: gridColor },
-        title: { display: true, text: 'Average Happiness Score' },
-        min: 3.5, max: 8.0
-      },
-      y: { grid: { color: 'transparent' } }
-    }
+function buildChartRegion(rd) {
+  const regionColors2 = ['#6c63ff','#00c9a7','#f7b731','#fc5c65','#26de81','#fd9644','#a55eea','#4bcffa','#ff6b6b','#c8d6e5'];
+  if (chartRegion) {
+    chartRegion.data.labels = rd.map(d => d.region);
+    chartRegion.data.datasets[0].data = rd.map(d => d.avg);
+    chartRegion.update();
+    return;
   }
-});
+  chartRegion = new Chart(document.getElementById('chartRegion'), {
+    type: 'bar',
+    data: {
+      labels: rd.map(d => d.region),
+      datasets: [{ label:'Avg Happiness Score', data:rd.map(d=>d.avg), backgroundColor:regionColors2, borderRadius:6 }]
+    },
+    options: {
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{...baseTooltip, callbacks:{label:ctx=>{const r=rd[ctx.dataIndex];return ` Score: ${r.avg} (n=${r.n??'—'} records)`;}}} },
+      scales:{ x:{grid:{color:gridColor}, title:{display:true,text:'Average Happiness Score'}, min:3.5, max:8.0}, y:{grid:{color:'transparent'}} }
+    }
+  });
+}
 
 // ── COUNTRY TABLE ─────────────────────────────────────────────────────
+let _tableData = ALL_COUNTRIES;
 function renderTable(data) {
   const tbody = document.getElementById('countryTableBody');
   tbody.innerHTML = data.map((d, i) => {
-    const errClass = d.error < 0.25 ? 'err-low' : d.error < 0.6 ? 'err-mid' : 'err-high';
+    const err = d.avg_abs_error ?? d.error ?? 0;
+    const actual = d.avg_actual ?? d.actual ?? 0;
+    const predicted = d.avg_predicted ?? d.predicted ?? 0;
+    const errClass = err < 0.25 ? 'err-low' : err < 0.6 ? 'err-mid' : 'err-high';
     return `<tr>
       <td style="color:var(--text-muted)">${i+1}</td>
       <td>${d.country}</td>
-      <td>${d.actual.toFixed(3)}</td>
-      <td>${d.predicted.toFixed(3)}</td>
-      <td class="${errClass}">${d.error.toFixed(3)}</td>
+      <td>${actual.toFixed(3)}</td>
+      <td>${predicted.toFixed(3)}</td>
+      <td class="${errClass}">${err.toFixed(3)}</td>
     </tr>`;
   }).join('');
 }
-renderTable(ALL_COUNTRIES);
 
 document.getElementById('countrySearch').addEventListener('input', e => {
   const q = e.target.value.toLowerCase();
-  renderTable(q ? ALL_COUNTRIES.filter(d => d.country.toLowerCase().includes(q)) : ALL_COUNTRIES);
+  renderTable(q ? _tableData.filter(d => d.country.toLowerCase().includes(q)) : _tableData);
 });
+
+// ── RENDER WITH FALLBACK DATA ─────────────────────────────────────────
+function renderAll(kpi1, kpi2, kpi3, kpi4, statusData) {
+  updateKpiCards(kpi1);
+  buildChartCountry(kpi2);
+  buildChartStatus(statusData);
+  buildChartScatter(kpi2);      // country-level scatter (avg per country)
+  buildChartYearLine(kpi4);
+  buildChartYearError(kpi4);
+  buildChartRegion(REGION_DATA);
+  _tableData = kpi2;
+  renderTable(kpi2);
+}
+
+// ── BOOT: try live API, fall back to embedded snapshot ────────────────
+async function boot() {
+  try {
+    const [r1, r2, r4] = await Promise.all([
+      fetch(`${API_BASE}/api/kpi1`, { signal: AbortSignal.timeout(3000) }),
+      fetch(`${API_BASE}/api/kpi2`, { signal: AbortSignal.timeout(3000) }),
+      fetch(`${API_BASE}/api/kpi4`, { signal: AbortSignal.timeout(3000) }),
+    ]);
+    if (!r1.ok || !r2.ok || !r4.ok) throw new Error('API returned error');
+
+    const [liveKpi1, liveKpi2, liveKpi4] = await Promise.all([r1.json(), r2.json(), r4.json()]);
+
+    // Merge processing_status from kpi1 response or use fallback
+    const liveStatus = liveKpi1.processing_status?.length
+      ? liveKpi1.processing_status
+      : STATUS_DATA;
+
+    LIVE_MODE = true;
+    setLiveIndicator(true);
+    renderAll(liveKpi1, liveKpi2, [], liveKpi4, liveStatus);
+    console.log('✅ Dashboard loaded from live PostgreSQL database');
+
+  } catch (err) {
+    // Fallback to baked-in snapshot — works without any backend
+    setLiveIndicator(false);
+    renderAll(KPI1, ALL_COUNTRIES, [], YEAR_DATA, STATUS_DATA);
+    console.info('ℹ️ API not reachable — showing embedded snapshot data. Run `uvicorn api:app` to connect live.');
+  }
+}
+
+// ── KPI TAB NAVIGATION ────────────────────────────────────────────────
+(function initTabs() {
+  const btns   = document.querySelectorAll('.kpi-tab-btn');
+  const panels = document.querySelectorAll('.kpi-panel');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+
+      btns.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+
+      btn.classList.add('active');
+      const panel = document.getElementById('panel-' + target);
+      panel.classList.add('active');
+      panel.style.display = 'block';
+
+      // Chart.js needs resize after becoming visible
+      setTimeout(() => {
+        [chartCountry, chartStatus, chartScatter,
+         chartYearLine, chartYearError, chartRegion]
+          .forEach(c => c?.resize());
+      }, 60);
+    });
+  });
+
+  // Ensure all non-active panels are hidden on load
+  panels.forEach(p => {
+    if (!p.classList.contains('active')) p.style.display = 'none';
+  });
+})();
+
+boot();
 </script>
 </body>
 </html>
